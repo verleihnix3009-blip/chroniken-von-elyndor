@@ -1,226 +1,672 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#101522">
-  <title>Chroniken von Elyndor</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chroniken von Elyndor</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ background:#090d15;
+ color:#e8edf5;
+ font-family:Arial,sans-serif;
+}
+header{
+ background:linear-gradient(135deg,#172238,#0b101b);
+ padding:18px;
+ border-bottom:1px solid #35425a;
+ position:sticky;
+ top:0;
+ z-index:5;
+}
+.title{
+ font-size:25px;
+ font-weight:bold;
+}
+.subtitle{color:#98a6bd;margin-top:5px}
+.stats{
+ display:flex;
+ flex-wrap:wrap;
+ gap:12px;
+ margin-top:14px;
+}
+.stat{
+ background:#111827;
+ border:1px solid #344157;
+ padding:8px 12px;
+ border-radius:9px;
+}
+.gold{color:#e5c55e}
 
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #0b0f18;
-      color: #f2f4f8;
-    }
+nav{
+ display:flex;
+ overflow-x:auto;
+ background:#101624;
+ border-bottom:1px solid #303b50;
+}
+nav button{
+ flex:1;
+ min-width:105px;
+ border:0;
+ border-radius:0;
+ background:transparent;
+ color:#aebbd0;
+ padding:14px 10px;
+}
+nav button.active{
+ color:#fff;
+ background:#202b40;
+}
 
-    header {
-      padding: 20px;
-      text-align: center;
-      background: linear-gradient(135deg, #171f32, #0d111c);
-      border-bottom: 1px solid #39445c;
-    }
+main{
+ max-width:1000px;
+ margin:auto;
+ padding:16px;
+}
+.section{display:none}
+.section.active{display:block}
 
-    h1 {
-      margin: 0;
-      font-size: 28px;
-    }
+.panel{
+ background:#131a27;
+ border:1px solid #303b50;
+ border-radius:14px;
+ padding:18px;
+ margin-bottom:16px;
+}
+.panel h2{margin-top:0}
 
-    .subtitle {
-      margin-top: 8px;
-      color: #aeb9cc;
-    }
+.grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+ gap:12px;
+}
 
-    .player {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      margin-top: 15px;
-      color: #d7c27a;
-    }
+.card{
+ background:#1a2333;
+ border:1px solid #354157;
+ border-radius:12px;
+ padding:15px;
+}
 
-    main {
-      max-width: 900px;
-      margin: auto;
-      padding: 20px;
-    }
+.card h3{margin-top:0}
 
-    .panel {
-      background: #151b29;
-      border: 1px solid #303a50;
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 20px;
-    }
+button.action{
+ background:#26344b;
+ color:#fff;
+ border:1px solid #465671;
+ border-radius:9px;
+ padding:11px 14px;
+ margin-top:8px;
+}
+button.action:active{transform:scale(.98)}
 
-    h2 {
-      margin-top: 0;
-    }
+.progress{
+ height:10px;
+ background:#080c13;
+ border-radius:10px;
+ overflow:hidden;
+ margin:8px 0 14px;
+}
+.progress span{
+ display:block;
+ height:100%;
+ background:#647ea8;
+ width:12%;
+}
 
-    .classes {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 14px;
-    }
+.slot{
+ padding:13px;
+ border:1px solid #39475e;
+ border-radius:9px;
+ background:#101722;
+}
 
-    button {
-      width: 100%;
-      padding: 14px;
-      border: 1px solid #46536d;
-      border-radius: 10px;
-      background: #20293b;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
+.quality-normal{color:#c7ceda}
+.quality-rare{color:#4ea6ff}
+.quality-epic{color:#b477ff}
+.quality-legendary{color:#ffb44d}
+.quality-mythic{color:#ff6fc8}
 
-    button:hover {
-      background: #2b3850;
-    }
+.mine{
+ border-left:4px solid #697e9e;
+}
+.mine.empty{
+ opacity:.55;
+}
 
-    .class-card {
-      padding: 18px;
-      border-radius: 12px;
-      background: #1b2333;
-      border: 1px solid #354158;
-    }
+.quest{
+ border-left:4px solid #a88745;
+}
 
-    .class-card h3 {
-      margin-top: 0;
-    }
+.notice{
+ padding:12px;
+ background:#0e1521;
+ border-radius:9px;
+ color:#aebbd0;
+ margin-top:12px;
+}
 
-    .status {
-      margin-top: 20px;
-      padding: 15px;
-      background: #101722;
-      border-radius: 10px;
-      color: #c8d2e5;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .gold {
-      color: #e7c766;
-    }
-
-    .success {
-      color: #76d69b;
-    }
-  </style>
+ul{
+ padding-left:20px;
+ line-height:1.7;
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1>Chroniken von Elyndor</h1>
-  <div class="subtitle">Ein Fantasy-RPG im Reich der alten Mächte</div>
+ <div class="title">⚔️ Chroniken von Elyndor</div>
+ <div class="subtitle">Das Reich der alten Mächte</div>
 
-  <div class="player">
-    <span>Level: <strong id="level">1</strong></span>
-    <span>Gold: <strong class="gold" id="gold">250</strong></span>
-    <span>Gebiet: <strong id="region">Grünes Tal</strong></span>
-  </div>
+ <div class="stats">
+  <div class="stat">Level <strong id="level">1</strong></div>
+  <div class="stat">XP <strong id="xp">0 / 100</strong></div>
+  <div class="stat gold">💰 <strong id="gold">250</strong></div>
+  <div class="stat">📍 <strong id="region">Grünes Tal</strong></div>
+ </div>
 </header>
+
+<nav>
+ <button class="active" onclick="showTab('world',this)">🗺️ Welt</button>
+ <button onclick="showTab('character',this)">🧙 Charakter</button>
+ <button onclick="showTab('inventory',this)">🎒 Inventar</button>
+ <button onclick="showTab('mines',this)">⛏️ Minen</button>
+ <button onclick="showTab('quests',this)">📜 Quests</button>
+</nav>
 
 <main>
 
-  <section class="panel">
-    <h2>Wähle deine Klasse</h2>
+<!-- WELT -->
 
-    <div class="classes">
+<section id="world" class="section active">
 
-      <div class="class-card">
-        <h3>⚔️ Klingenmeister</h3>
-        <p>Meister des Nahkampfes mit hoher Angriffskraft.</p>
-        <button onclick="chooseClass('Klingenmeister')">
-          Klingenmeister wählen
-        </button>
-      </div>
+ <div class="panel">
+  <h2>🗺️ Welt von Elyndor</h2>
+  <p>Wähle deinen aktuellen Aufenthaltsort.</p>
 
-      <div class="class-card">
-        <h3>🔮 Arkanist</h3>
-        <p>Beherrscht mächtige arkane Magie.</p>
-        <button onclick="chooseClass('Arkanist')">
-          Arkanist wählen
-        </button>
-      </div>
+  <div class="grid">
 
-      <div class="class-card">
-        <h3>🛡️ Wächter</h3>
-        <p>Unerschütterlicher Verteidiger seiner Verbündeten.</p>
-        <button onclick="chooseClass('Wächter')">
-          Wächter wählen
-        </button>
-      </div>
+   <div class="card">
+    <h3>🌲 Grünes Tal</h3>
+    <p>Die Startregion für neue Abenteurer.</p>
+    <button class="action" onclick="travel('Grünes Tal')">Reisen</button>
+   </div>
 
-      <div class="class-card">
-        <h3>🌿 Naturhüter</h3>
-        <p>Verbindet Naturmagie, Geschwindigkeit und Heilung.</p>
-        <button onclick="chooseClass('Naturhüter')">
-          Naturhüter wählen
-        </button>
-      </div>
+   <div class="card">
+    <h3>🔥 Verbrannte Ebene</h3>
+    <p>Eine gefährliche Landschaft voller Feuerkreaturen.</p>
+    <button class="action" onclick="travel('Verbrannte Ebene')">Reisen</button>
+   </div>
 
-    </div>
+   <div class="card">
+    <h3>❄️ Frostlande</h3>
+    <p>Eisige Gebiete mit seltenen Ressourcen.</p>
+    <button class="action" onclick="travel('Frostlande')">Reisen</button>
+   </div>
 
-    <div id="status" class="status">
-      Noch keine Klasse gewählt.
-    </div>
-  </section>
+   <div class="card">
+    <h3>🐉 Drachengebiet</h3>
+    <p>Heimat mächtiger Drachen und Bosse.</p>
+    <button class="action" onclick="travel('Drachengebiet')">Reisen</button>
+   </div>
 
-  <section class="panel">
-    <h2>🌎 Grünes Tal</h2>
-    <p>
-      Deine Reise beginnt im Grünen Tal. Alte Ruinen, versteckte Minen
-      und gefährliche Kreaturen warten auf dich.
-    </p>
+   <div class="card">
+    <h3>🌌 Astralgebiet</h3>
+    <p>Eine Endgame-Region für die stärksten Helden.</p>
+    <button class="action" onclick="travel('Astralgebiet')">Reisen</button>
+   </div>
 
-    <button onclick="startAdventure()">
-      Abenteuer beginnen
-    </button>
+  </div>
 
-    <div id="adventure" class="status hidden"></div>
-  </section>
+  <div id="travelMessage" class="notice">
+   Du befindest dich im Grünen Tal.
+  </div>
+ </div>
+
+ <div class="panel">
+  <h2>📍 Aktueller Ort</h2>
+  <div class="card">
+   <h3 id="currentLocation">Grünes Tal</h3>
+   <p>Hier kannst du Quests annehmen, Ressourcen sammeln und Monster bekämpfen.</p>
+   <button class="action" onclick="gainXP(20)">⚔️ Trainingskampf</button>
+  </div>
+ </div>
+
+</section>
+
+<!-- CHARAKTER -->
+
+<section id="character" class="section">
+
+ <div class="panel">
+  <h2>🧙 Charakter</h2>
+
+  <div class="card">
+   <h3 id="className">Noch keine Klasse gewählt</h3>
+   <p>Level <strong id="charLevel">1</strong></p>
+
+   <div class="progress">
+    <span id="xpBar"></span>
+   </div>
+
+   <p>XP: <span id="charXP">0 / 100</span></p>
+  </div>
+ </div>
+
+ <div class="panel">
+  <h2>⚔️ Klasse wählen</h2>
+
+  <div class="grid">
+
+   <div class="card">
+    <h3>⚔️ Klingenmeister</h3>
+    <p>Meister des Nahkampfes.</p>
+    <button class="action" onclick="chooseClass('Klingenmeister')">Wählen</button>
+   </div>
+
+   <div class="card">
+    <h3>🔮 Arkanist</h3>
+    <p>Beherrscht arkane Magie.</p>
+    <button class="action" onclick="chooseClass('Arkanist')">Wählen</button>
+   </div>
+
+   <div class="card">
+    <h3>🛡️ Wächter</h3>
+    <p>Unerschütterlicher Verteidiger.</p>
+    <button class="action" onclick="chooseClass('Wächter')">Wählen</button>
+   </div>
+
+   <div class="card">
+    <h3>🌿 Naturhüter</h3>
+    <p>Meister der Naturmagie.</p>
+    <button class="action" onclick="chooseClass('Naturhüter')">Wählen</button>
+   </div>
+
+  </div>
+ </div>
+
+ <div class="panel">
+  <h2>🛡️ Ausrüstung</h2>
+
+  <div class="grid">
+
+   <div class="slot">🪖 Helm<br><strong>Stahlwanderer-Helm</strong></div>
+   <div class="slot">🛡️ Brust<br><strong>Stahlwanderer-Brust</strong></div>
+   <div class="slot">👖 Hose<br><strong>Stahlwanderer-Hose</strong></div>
+   <div class="slot">🥾 Schuhe<br><strong>Stahlwanderer-Schuhe</strong></div>
+   <div class="slot">💎 Armband<br><strong>Stahlarmband</strong></div>
+   <div class="slot">📿 Halskette<br><strong>Lehrlingskette</strong></div>
+   <div class="slot">💍 Ring<br><strong>Einfacher Ring</strong></div>
+   <div class="slot">⚔️ Waffe<br><strong>Stahlschwert</strong></div>
+
+  </div>
+ </div>
+
+</section>
+
+<!-- INVENTAR -->
+
+<section id="inventory" class="section">
+
+ <div class="panel">
+  <h2>🎒 Inventar</h2>
+
+  <div class="grid">
+
+   <div class="card">
+    <h3>⭐ Sternsplitter</h3>
+    <p id="stones">100 Stück</p>
+   </div>
+
+   <div class="card">
+    <h3>💰 Gold</h3>
+    <p id="inventoryGold">250</p>
+   </div>
+
+   <div class="card">
+    <h3>⚔️ Stahlschwert</h3>
+    <p class="quality-normal">Normal · ★0</p>
+   </div>
+
+   <div class="card">
+    <h3>🛡️ Stahlwanderer</h3>
+    <p class="quality-normal">Normal · 1/8 Teile</p>
+   </div>
+
+  </div>
+ </div>
+
+ <div class="panel">
+  <h2>⭐ Verstärkung</h2>
+  <p>Aktuelles Ausrüstungsteil: <strong>Stahlschwert ★0</strong></p>
+  <button class="action" onclick="enhance()">⭐ Verstärken</button>
+  <div id="enhanceMessage" class="notice">
+   Benötigt Sternsplitter.
+  </div>
+ </div>
+
+</section>
+
+<!-- MINEN -->
+
+<section id="mines" class="section">
+
+ <div class="panel">
+  <h2>⛏️ Ressourcenminen</h2>
+  <p>Jede Mine besitzt 100 Ressourcen und füllt sich nach kurzer Zeit wieder auf.</p>
+
+  <div class="grid">
+
+   <div id="mine1" class="card mine">
+    <h3>⛏️ Verstärkungssteinmine</h3>
+    <p>Ressourcen: <strong id="mine1Count">100</strong> / 100</p>
+    <p>Für ★0–★3</p>
+    <button class="action" onclick="mine(1)">⛏️ Abbauen</button>
+   </div>
+
+   <div id="mine2" class="card mine">
+    <h3>💠 Sternkristallmine</h3>
+    <p>Ressourcen: <strong id="mine2Count">100</strong> / 100</p>
+    <p>Für ★4–★6</p>
+    <button class="action" onclick="mine(2)">⛏️ Abbauen</button>
+   </div>
+
+   <div id="mine3" class="card mine">
+    <h3>🔷 Himmelskristallmine</h3>
+    <p>Ressourcen: <strong id="mine3Count">100</strong> / 100</p>
+    <p>Für ★7–★9</p>
+    <button class="action" onclick="mine(3)">⛏️ Abbauen</button>
+   </div>
+
+  </div>
+
+  <div id="mineMessage" class="notice">
+   Wähle eine Mine.
+  </div>
+ </div>
+
+</section>
+
+<!-- QUESTS -->
+
+<section id="quests" class="section">
+
+ <div class="panel">
+  <h2>📜 Quests</h2>
+
+  <div class="card quest">
+   <h3>🌲 Die ersten Schritte</h3>
+   <p>Erkunde das Grüne Tal.</p>
+   <p>Belohnung: 20 XP + 50 Gold</p>
+   <button class="action" onclick="completeQuest(1)">Quest abschließen</button>
+  </div>
+
+  <br>
+
+  <div class="card quest">
+   <h3>⛏️ Die alte Mine</h3>
+   <p>Sammle 10 Verstärkungssteine.</p>
+   <p>Belohnung: 50 XP + 75 Gold</p>
+   <button class="action" onclick="completeQuest(2)">Quest abschließen</button>
+  </div>
+
+  <br>
+
+  <div class="card quest">
+   <h3>🐺 Gefahr im Wald</h3>
+   <p>Besiege ein Monster im Grünen Tal.</p>
+   <p>Belohnung: 100 XP + 100 Gold</p>
+   <button class="action" onclick="completeQuest(3)">Quest abschließen</button>
+  </div>
+
+  <div id="questMessage" class="notice">
+   Deine Quests warten auf dich.
+  </div>
+ </div>
+
+</section>
 
 </main>
 
 <script>
-  let playerClass = "";
 
-  function chooseClass(selectedClass) {
-    playerClass = selectedClass;
+let player={
+ level:1,
+ xp:0,
+ gold:250,
+ stones:100,
+ class:"",
+ region:"Grünes Tal",
+ weaponStars:0
+};
 
-    document.getElementById("status").innerHTML =
-      "<span class='success'>✓ Klasse gewählt:</span> " +
-      "<strong>" + selectedClass + "</strong><br><br>" +
-      "Deine Reise in Elyndor kann beginnen.";
+let mines={
+ 1:100,
+ 2:100,
+ 3:100
+};
+
+function showTab(id,button){
+
+ document.querySelectorAll(".section")
+ .forEach(s=>s.classList.remove("active"));
+
+ document.getElementById(id)
+ .classList.add("active");
+
+ document.querySelectorAll("nav button")
+ .forEach(b=>b.classList.remove("active"));
+
+ button.classList.add("active");
+}
+
+function chooseClass(name){
+
+ player.class=name;
+
+ document.getElementById("className").textContent=name;
+
+ alert("Du bist jetzt "+name+"!");
+
+}
+
+function travel(place){
+
+ player.region=place;
+
+ document.getElementById("region").textContent=place;
+
+ document.getElementById("currentLocation").textContent=place;
+
+ document.getElementById("travelMessage").textContent=
+ "Du bist nach "+place+" gereist.";
+
+}
+
+function gainXP(amount){
+
+ player.xp+=amount;
+
+ checkLevel();
+
+ update();
+
+ alert("Du erhältst "+amount+" XP!");
+
+}
+
+function checkLevel(){
+
+ while(player.xp>=100 && player.level<120){
+
+  player.xp-=100;
+  player.level++;
+
+ }
+
+}
+
+function update(){
+
+ document.getElementById("level").textContent=player.level;
+ document.getElementById("charLevel").textContent=player.level;
+
+ document.getElementById("xp").textContent=
+ player.xp+" / 100";
+
+ document.getElementById("charXP").textContent=
+ player.xp+" / 100";
+
+ document.getElementById("gold").textContent=player.gold;
+ document.getElementById("inventoryGold").textContent=player.gold;
+
+ document.getElementById("stones").textContent=
+ player.stones+" Stück";
+
+ document.getElementById("xpBar").style.width=
+ Math.min(player.xp,100)+"%";
+
+ document.getElementById("region").textContent=player.region;
+
+}
+
+function mine(number){
+
+ if(mines[number]<=0){
+
+  document.getElementById("mineMessage").textContent=
+  "Diese Mine ist leer. Sie wird bald wieder aufgefüllt.";
+
+  return;
+ }
+
+ let amount=Math.min(10,mines[number]);
+
+ mines[number]-=amount;
+
+ player.stones+=amount;
+
+ document.getElementById("mine"+number+"Count").textContent=
+ mines[number];
+
+ document.getElementById("mineMessage").textContent=
+ "Du hast "+amount+" Ressourcen abgebaut.";
+
+ update();
+
+ if(mines[number]<=0){
+
+  document.getElementById("mine"+number)
+  .classList.add("empty");
+
+  setTimeout(function(){
+
+   mines[number]=100;
+
+   document.getElementById("mine"+number+"Count")
+   .textContent=100;
+
+   document.getElementById("mine"+number)
+   .classList.remove("empty");
+
+  },10000);
+
+ }
+
+}
+
+function enhance(){
+
+ if(player.stones<=0){
+
+  document.getElementById("enhanceMessage").textContent=
+  "Du hast keine Sternsplitter.";
+
+  return;
+ }
+
+ if(player.weaponStars>=10){
+
+  document.getElementById("enhanceMessage").textContent=
+  "Deine Waffe besitzt bereits ★10.";
+
+  return;
+ }
+
+ let rates=[
+  100,
+  100,
+  95,
+  90,
+  85,
+  75,
+  55,
+  40,
+  25,
+  12
+ ];
+
+ let rate=rates[player.weaponStars];
+
+ player.stones--;
+
+ let roll=Math.random()*100;
+
+ if(roll<rate){
+
+  player.weaponStars++;
+
+  document.getElementById("enhanceMessage").textContent=
+  "⭐ Erfolg! Dein Stahlschwert ist jetzt ★"+
+  player.weaponStars+".";
+
+ }else{
+
+  if(player.weaponStars>=4){
+   player.weaponStars--;
   }
 
-  function startAdventure() {
-    const adventure = document.getElementById("adventure");
+  document.getElementById("enhanceMessage").textContent=
+  "❌ Verstärkung fehlgeschlagen.";
 
-    if (!playerClass) {
-      adventure.classList.remove("hidden");
-      adventure.innerHTML =
-        "⚠️ Wähle zuerst eine Klasse.";
-      return;
-    }
+ }
 
-    adventure.classList.remove("hidden");
+ update();
 
-    adventure.innerHTML =
-      "<strong>⚔️ Abenteuer gestartet!</strong><br><br>" +
-      "Du bist ein " + playerClass +
-      " auf Stufe 1 und betrittst das Grüne Tal.<br><br>" +
-      "Deine ersten Aufgaben warten bereits auf dich.";
-  }
+}
+
+function completeQuest(id){
+
+ if(id===1){
+
+  player.gold+=50;
+  player.xp+=20;
+
+ }else if(id===2){
+
+  player.gold+=75;
+  player.xp+=50;
+
+ }else{
+
+  player.gold+=100;
+  player.xp+=100;
+
+ }
+
+ checkLevel();
+ update();
+
+ document.getElementById("questMessage").textContent=
+ "✅ Quest abgeschlossen! Belohnung erhalten.";
+
+}
+
+update();
+
 </script>
 
 </body>
