@@ -2,326 +2,332 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Chroniken von Elyndor</title>
 
 <style>
 *{box-sizing:border-box}
 
 body{
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#0b1020;
-  color:#fff;
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#080d19;
+ color:#fff;
 }
 
 button{
-  border:0;
-  border-radius:10px;
-  padding:11px 15px;
-  font-weight:bold;
-  cursor:pointer;
-  background:#27355f;
-  color:white;
+ border:0;
+ border-radius:10px;
+ padding:11px 14px;
+ margin:3px;
+ background:#29385f;
+ color:#fff;
+ font-weight:bold;
+ cursor:pointer;
 }
 
 button:hover{filter:brightness(1.2)}
 button:disabled{opacity:.4;cursor:not-allowed}
 
 .header{
-  padding:15px;
-  background:#151d38;
-  border-bottom:1px solid #34416b;
+ background:#151e37;
+ padding:15px;
+ border-bottom:1px solid #394873;
 }
 
-.title{
-  font-size:25px;
-  font-weight:bold;
-}
+.title{font-size:25px;font-weight:bold}
 
 .stats{
-  margin-top:8px;
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-  color:#b9c5ff;
+ display:flex;
+ flex-wrap:wrap;
+ gap:12px;
+ margin-top:8px;
+ color:#c4d0ff;
 }
 
 .nav{
-  display:flex;
-  gap:7px;
-  overflow-x:auto;
-  padding:10px;
-  background:#11172b;
+ display:flex;
+ overflow-x:auto;
+ gap:6px;
+ padding:9px;
+ background:#101629;
 }
 
-.nav button.active{
-  background:#536dff;
-}
+.nav button.active{background:#536dff}
 
 .page{
-  display:none;
-  padding:15px;
-  max-width:1100px;
-  margin:auto;
+ display:none;
+ max-width:1100px;
+ margin:auto;
+ padding:14px;
 }
 
 .page.active{display:block}
 
 .panel{
-  background:#151d38;
-  border:1px solid #34416b;
-  border-radius:14px;
-  padding:15px;
-  margin-bottom:15px;
+ background:#151e37;
+ border:1px solid #394873;
+ border-radius:14px;
+ padding:15px;
+ margin-bottom:15px;
 }
 
-.region-grid,
-.equipment-grid,
-.mine-grid,
-.quest-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
-  gap:10px;
+.grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+ gap:10px;
 }
 
 .card{
-  background:#202a4b;
-  padding:14px;
-  border-radius:12px;
-  border:1px solid #36446f;
+ background:#202b4c;
+ border:1px solid #3b4b78;
+ border-radius:12px;
+ padding:13px;
 }
 
-.hpbar{
-  height:10px;
-  background:#101522;
-  border-radius:10px;
-  overflow:hidden;
-  margin-top:7px;
+.bigicon{
+ font-size:45px;
+ text-align:center;
 }
 
-.hp{
-  height:100%;
-  background:#37d66b;
-  transition:width .35s;
+.hpbar,.xpbar{
+ height:11px;
+ background:#080c15;
+ border-radius:20px;
+ overflow:hidden;
+ margin:7px 0;
 }
 
-.enemy .hp{background:#ef5360}
-
-.unit{
-  position:relative;
-  min-height:190px;
-  transition:transform .2s,filter .2s,opacity .3s;
+.hpfill{
+ height:100%;
+ background:#36d56a;
+ transition:width .35s;
 }
 
-.unit.dead{
-  opacity:.35;
-  filter:grayscale(1);
-}
+.enemy .hpfill{background:#ed5863}
 
-.unit.attacking{
-  animation:attackMove .45s ease;
-}
-
-.unit.hit{
-  animation:hitShake .4s ease;
-}
-
-@keyframes attackMove{
-  0%{transform:translateX(0)}
-  45%{transform:translateX(35px) scale(1.04)}
-  100%{transform:translateX(0)}
-}
-
-@keyframes hitShake{
-  0%,100%{transform:translateX(0)}
-  20%{transform:translateX(-10px)}
-  40%{transform:translateX(10px)}
-  60%{transform:translateX(-8px)}
-  80%{transform:translateX(5px)}
-}
-
-.unit-icon{
-  font-size:52px;
-  text-align:center;
-  margin:8px;
+.xpfill{
+ height:100%;
+ background:#667dff;
+ transition:width .35s;
 }
 
 .team{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px;
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:9px;
+}
+
+.unit{
+ min-height:200px;
+ transition:.25s;
+}
+
+.unit.attackAnim{
+ animation:attack .45s ease;
+}
+
+.unit.hitAnim{
+ animation:hit .4s ease;
+}
+
+.unit.dead{
+ opacity:.35;
+ filter:grayscale(1);
+}
+
+.unit.selected{
+ outline:3px solid #ffd75b;
+ box-shadow:0 0 20px #ffd75b;
+}
+
+@keyframes attack{
+ 0%{transform:translateX(0)}
+ 45%{transform:translateX(35px) scale(1.05)}
+ 100%{transform:translateX(0)}
+}
+
+@keyframes hit{
+ 0%,100%{transform:translateX(0)}
+ 20%{transform:translateX(-9px)}
+ 40%{transform:translateX(9px)}
+ 60%{transform:translateX(-7px)}
+ 80%{transform:translateX(5px)}
 }
 
 .vs{
-  text-align:center;
-  font-size:28px;
-  font-weight:bold;
-  padding:15px;
-  color:#ffd76a;
-}
-
-.battle-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:12px;
-}
-
-.skill{
-  background:#3a4db0;
-}
-
-.skill.fire{background:#9b3e37}
-.skill.def{background:#3c7355}
-.skill.heal{background:#527eaf}
-
-.target{
-  outline:3px solid #ffd34d;
-  box-shadow:0 0 20px #ffd34d;
-}
-
-.log{
-  height:180px;
-  overflow-y:auto;
-  background:#090e1b;
-  border-radius:10px;
-  padding:10px;
-  font-size:14px;
-}
-
-.log div{
-  padding:4px 0;
-  border-bottom:1px solid #1d2741;
-}
-
-.turn{
-  font-size:18px;
-  font-weight:bold;
-  color:#ffd76a;
+ text-align:center;
+ font-size:27px;
+ color:#ffd45e;
+ padding:12px;
+ font-weight:bold;
 }
 
 .initiative{
-  display:flex;
-  gap:6px;
-  overflow-x:auto;
-  padding:8px 0;
+ display:flex;
+ overflow-x:auto;
+ gap:6px;
+ padding:7px 0;
 }
 
 .initiative span{
-  background:#27355f;
-  padding:7px 10px;
-  border-radius:8px;
-  white-space:nowrap;
+ background:#29385f;
+ padding:7px 9px;
+ border-radius:8px;
+ white-space:nowrap;
 }
 
-.reward{
-  color:#7ff59d;
-  font-weight:bold;
+.log{
+ height:190px;
+ overflow-y:auto;
+ background:#070b13;
+ border-radius:10px;
+ padding:10px;
 }
+
+.log div{
+ padding:5px 0;
+ border-bottom:1px solid #202b40;
+}
+
+.status{
+ display:inline-block;
+ padding:3px 6px;
+ border-radius:5px;
+ background:#713c3c;
+ font-size:12px;
+ margin:2px;
+}
+
+.skillbar{
+ display:flex;
+ flex-wrap:wrap;
+ gap:5px;
+}
+
+.rare{color:#55d8ff}
+.epic{color:#c879ff}
+.legendary{color:#ffbd4c}
+.mythic{color:#ff6cff}
+
+.star{
+ color:#ffd75b;
+ letter-spacing:1px;
+}
+
+.loot{
+ border-left:4px solid #ffd75b;
+ padding-left:10px;
+}
+
+.small{font-size:13px;color:#aeb9d8}
+.good{color:#72f19b}
+.bad{color:#ff7474}
 </style>
 </head>
 
 <body>
 
 <header class="header">
-  <div class="title">⚔️ Chroniken von Elyndor</div>
-  <div class="stats">
-    <span>Level <b id="playerLevel">1</b></span>
-    <span>XP <b id="xp">0</b>/100</span>
-    <span>💰 <b id="gold">250</b></span>
-    <span>🌍 <b id="region">Grünes Tal</b></span>
-  </div>
+<div class="title">⚔️ Chroniken von Elyndor</div>
+
+<div class="stats">
+<span>Lv. <b id="playerLevel">1</b></span>
+<span>XP <b id="playerXP">0</b>/100</span>
+<span>💰 <b id="gold">250</b></span>
+<span>⭐ <b id="stars">20</b></span>
+<span>🌍 <b id="region">Grünes Tal</b></span>
+</div>
 </header>
 
 <nav class="nav">
-  <button class="active" onclick="showPage('world',this)">🌍 Welt</button>
-  <button onclick="showPage('character',this)">🧙 Charakter</button>
-  <button onclick="showPage('companions',this)">🐺 Begleiter</button>
-  <button onclick="showPage('battle',this)">⚔️ Kampf</button>
-  <button onclick="showPage('inventory',this)">🎒 Inventar</button>
-  <button onclick="showPage('mines',this)">⛏️ Minen</button>
-  <button onclick="showPage('quests',this)">📜 Quests</button>
+<button class="active" onclick="page('world',this)">🌍 Welt</button>
+<button onclick="page('character',this)">🧙 Charakter</button>
+<button onclick="page('companions',this)">🐺 Begleiter</button>
+<button onclick="page('battle',this)">⚔️ Kampf</button>
+<button onclick="page('equipment',this)">🛡️ Ausrüstung</button>
+<button onclick="page('inventory',this)">🎒 Inventar</button>
+<button onclick="page('mines',this)">⛏️ Minen</button>
+<button onclick="page('quests',this)">📜 Quests</button>
 </nav>
 
-<!-- WELT -->
 <section id="world" class="page active">
 
 <div class="panel">
-<h2>🌍 Welt von Elyndor</h2>
-<p>Wähle deine Region.</p>
+<h2>🌍 Welt</h2>
 
-<div class="region-grid">
+<div class="grid">
+
 <div class="card">
 <h3>🌿 Grünes Tal</h3>
-<p>Empfohlen: Lv. 1–30</p>
+<p>Lv. 1–30</p>
 <button onclick="travel('Grünes Tal')">Betreten</button>
 </div>
 
 <div class="card">
 <h3>🔥 Verbrannte Ebene</h3>
-<p>Empfohlen: Lv. 30–50</p>
+<p>Lv. 30–50</p>
 <button onclick="travel('Verbrannte Ebene')">Betreten</button>
 </div>
 
 <div class="card">
 <h3>❄️ Frostlande</h3>
-<p>Empfohlen: Lv. 50–70</p>
+<p>Lv. 50–70</p>
 <button onclick="travel('Frostlande')">Betreten</button>
 </div>
 
 <div class="card">
 <h3>🐉 Drachengebiet</h3>
-<p>Empfohlen: Lv. 70–100</p>
+<p>Lv. 70–100</p>
 <button onclick="travel('Drachengebiet')">Betreten</button>
 </div>
 
 <div class="card">
 <h3>✨ Astralgebiet</h3>
-<p>Endgame</p>
+<p>Lv. 100–120</p>
 <button onclick="travel('Astralgebiet')">Betreten</button>
 </div>
+
 </div>
 </div>
 
 <div class="panel">
-<h2>⚔️ Schnellkampf</h2>
-<p>Stelle dein 3-vs-3-Team zusammen und starte einen Kampf.</p>
-<button onclick="showPage('battle')">Kampf starten</button>
+<h2>⚔️ Kampf</h2>
+<p>Stelle dein 3-vs-3-Team zusammen und kämpfe gegen verschiedene Gegnergruppen.</p>
+<button onclick="page('battle')">Kampf öffnen</button>
 </div>
 
 </section>
 
-<!-- CHARAKTER -->
 <section id="character" class="page">
 
 <div class="panel">
 <h2>🧙 Charakter</h2>
 
-<div class="region-grid">
+<div class="grid">
 
 <div class="card">
 <h3>⚔️ Klingenmeister</h3>
-<p>Starker physischer Nahkämpfer.</p>
-<button onclick="selectClass('Klingenmeister')">Wählen</button>
+<p>Physischer Nahkämpfer.</p>
+<button onclick="chooseClass('Klingenmeister')">Wählen</button>
 </div>
 
 <div class="card">
 <h3>🔮 Arkanist</h3>
-<p>Magieschaden und mächtige Zauber.</p>
-<button onclick="selectClass('Arkanist')">Wählen</button>
+<p>Starker Magieschaden.</p>
+<button onclick="chooseClass('Arkanist')">Wählen</button>
 </div>
 
 <div class="card">
 <h3>🛡️ Wächter</h3>
-<p>Hohe Verteidigung und Lebenspunkte.</p>
-<button onclick="selectClass('Wächter')">Wählen</button>
+<p>Tank und Verteidiger.</p>
+<button onclick="chooseClass('Wächter')">Wählen</button>
 </div>
 
 <div class="card">
 <h3>🌿 Naturhüter</h3>
-<p>Naturmagie und Unterstützung.</p>
-<button onclick="selectClass('Naturhüter')">Wählen</button>
+<p>Heilung und Naturmagie.</p>
+<button onclick="chooseClass('Naturhüter')">Wählen</button>
 </div>
 
 </div>
@@ -329,204 +335,225 @@ button:disabled{opacity:.4;cursor:not-allowed}
 <p>Aktuelle Klasse: <b id="className">Klingenmeister</b></p>
 </div>
 
-<div class="panel">
-<h2>🛡️ Ausrüstung</h2>
-
-<div class="equipment-grid">
-<div class="card">🪖 Helm<br>Stahlwanderer +0</div>
-<div class="card">👕 Brust<br>Stahlwanderer +0</div>
-<div class="card">👖 Hose<br>Stahlwanderer +0</div>
-<div class="card">👢 Schuhe<br>Stahlwanderer +0</div>
-<div class="card">💍 Ring<br>Stahlwanderer +0</div>
-<div class="card">📿 Halskette<br>Stahlwanderer +0</div>
-<div class="card">🔗 Armband<br>Stahlwanderer +0</div>
-<div class="card">⚔️ Waffe<br>Stahlwanderer +0</div>
-</div>
-</div>
-
 </section>
 
-<!-- BEGLEITER -->
 <section id="companions" class="page">
 
 <div class="panel">
-<h2>🐺 Deine Begleiter</h2>
+<h2>🐺 Begleiter</h2>
 
-<div class="region-grid">
-
-<div class="card">
-<div style="font-size:40px">🐺</div>
-<h3>Schattenwolf</h3>
-<p>Normal · Angreifer</p>
-<p>Lv. 1 · ★0</p>
-<button>Auswählen</button>
+<div id="companionCards" class="grid"></div>
 </div>
 
-<div class="card">
-<div style="font-size:40px">🦊</div>
-<h3>Runenfuchs</h3>
-<p>Selten · Magier</p>
-<p>Lv. 1 · ★0</p>
-<button>Auswählen</button>
-</div>
+<div class="panel">
+<h2>🔮 Begleiter-Fusion</h2>
 
-<div class="card">
-<div style="font-size:40px">🐻</div>
-<h3>Eisenbär</h3>
-<p>Normal · Tank</p>
-<p>Lv. 1 · ★0</p>
-<button>Auswählen</button>
-</div>
+<p>
+5 gleiche Begleiter können zur nächsten Seltenheit fusioniert werden.
+</p>
 
-<div class="card">
-<div style="font-size:40px">🐉</div>
-<h3>Feuerdrache</h3>
-<p>Legendär · Magier</p>
-<p>Lv. 1 · ★0</p>
-<button>Auswählen</button>
-</div>
-
-</div>
+<button onclick="fusionInfo()">Fusion erklären</button>
 </div>
 
 </section>
 
-<!-- KAMPF -->
 <section id="battle" class="page">
 
 <div class="panel">
 
-<div class="turn" id="battleStatus">
-Bereit für den Kampf
+<h2>⚔️ 3-vs-3-Kampf</h2>
+
+<div>
+Runde: <b id="round">1</b>
+&nbsp; | &nbsp;
+Aktiver Begleiter: <b id="activeUnit">–</b>
+</div>
+
+<div id="battleStatus" class="small">
+Wähle einen Kampf.
 </div>
 
 <div class="initiative" id="initiative"></div>
 
-<div class="team" id="playerTeam"></div>
+<h3>🟦 Dein Team</h3>
+<div id="playerTeam" class="team"></div>
 
-<div class="vs">VS</div>
+<div class="vs">⚔️ VS ⚔️</div>
 
-<div class="team" id="enemyTeam"></div>
+<h3>🟥 Gegner</h3>
+<div id="enemyTeam" class="team"></div>
 
 </div>
 
 <div class="panel">
 
-<h3>🎯 Aktionen</h3>
+<h3>🎯 Fähigkeiten</h3>
 
-<div id="actionText">
-Wähle eine Fähigkeit.
-</div>
+<div id="skills" class="skillbar"></div>
 
-<div class="battle-actions">
-
-<button class="skill" onclick="useSkill('basic')">
-⚔️ Angriff
-</button>
-
-<button class="skill fire" onclick="useSkill('special')">
-🔥 Spezialangriff
-</button>
-
-<button class="skill def" onclick="useSkill('defense')">
-🛡️ Verteidigen
-</button>
-
-<button class="skill heal" onclick="useSkill('heal')">
-💚 Heilen
-</button>
-
-<button onclick="endRound()">
-➡️ Runde beenden
-</button>
-
-<button onclick="resetBattle()">
-🔄 Kampf zurücksetzen
-</button>
-
-</div>
+<button onclick="endTurn()">➡️ Runde beenden</button>
+<button onclick="nextEnemyGroup()">➡️ Nächste Gegnergruppe</button>
+<button onclick="startBattle()">🔄 Kampf neu starten</button>
 
 </div>
 
 <div class="panel">
 
 <h3>📜 Kampflog</h3>
+<div id="battleLog" class="log"></div>
 
-<div class="log" id="battleLog"></div>
+</div>
+
+<div class="panel">
+
+<h3>🎁 Beute</h3>
+<div id="loot" class="loot">
+Noch keine Beute.
+</div>
 
 </div>
 
 </section>
 
-<!-- INVENTAR -->
+<section id="equipment" class="page">
+
+<div class="panel">
+
+<h2>🛡️ Ausrüstung</h2>
+
+<div class="card">
+
+<h3>⚔️ Stahlklinge</h3>
+
+<p>
+Qualität: <b>Normal</b><br>
+Verstärkung:
+<span id="weaponStars" class="star">★0</span>
+</p>
+
+<button onclick="enhanceWeapon()">
+⭐ Verstärken
+</button>
+
+<button onclick="toggleProtection()">
+🛡️ Schutzrune: <span id="protection">AUS</span>
+</button>
+
+<p class="small">
+Pity bei +9 → +10:
+<span id="pity">0</span>/10 Fehlschläge
+</p>
+
+</div>
+
+</div>
+
+</section>
+
 <section id="inventory" class="page">
 
 <div class="panel">
+
 <h2>🎒 Inventar</h2>
 
-<div class="region-grid">
-<div class="card">⭐ Sternsplitter<br><b id="starDust">20</b></div>
-<div class="card">💎 Sternkristall<br>0</div>
-<div class="card">🔷 Himmelskristall<br>0</div>
-<div class="card">✨ Sternessenz<br>0</div>
-<div class="card">💰 Goldkern<br>0</div>
+<div class="grid">
+
+<div class="card">
+⭐ Sternsplitter<br>
+<b id="dust">20</b>
 </div>
+
+<div class="card">
+💎 Sternkristall<br>
+<b id="crystal">0</b>
+</div>
+
+<div class="card">
+🔷 Himmelskristall<br>
+<b id="skyCrystal">0</b>
+</div>
+
+<div class="card">
+✨ Sternessenz<br>
+<b id="essence">0</b>
+</div>
+
+<div class="card">
+💰 Goldkern<br>
+<b id="goldCore">0</b>
+</div>
+
+<div class="card">
+🛡️ Schutzrune<br>
+<b id="runes">2</b>
+</div>
+
+</div>
+
 </div>
 
 </section>
 
-<!-- MINEN -->
 <section id="mines" class="page">
 
 <div class="panel">
+
 <h2>⛏️ Minen</h2>
 
-<div class="mine-grid">
+<div class="grid">
 
 <div class="card">
 <h3>⭐ Verstärkungssteinmine</h3>
 <p>Bestand: <b id="mine1">100</b>/100</p>
-<button onclick="mine(1)">⛏️ Abbauen</button>
+<button onclick="mine('normal')">Abbauen</button>
 </div>
 
 <div class="card">
 <h3>💎 Sternkristallmine</h3>
-<p>Bestand: 100/100</p>
-<button>⛏️ Abbauen</button>
+<p>Bestand: <b id="mine2">100</b>/100</p>
+<button onclick="mine('crystal')">Abbauen</button>
 </div>
 
 <div class="card">
 <h3>🔷 Himmelskristallmine</h3>
-<p>Bestand: 100/100</p>
-<button>⛏️ Abbauen</button>
+<p>Bestand: <b id="mine3">100</b>/100</p>
+<button onclick="mine('sky')">Abbauen</button>
 </div>
 
 </div>
+
 </div>
 
 </section>
 
-<!-- QUESTS -->
 <section id="quests" class="page">
 
 <div class="panel">
+
 <h2>📜 Quests</h2>
 
-<div class="quest-grid">
+<div class="grid">
 
 <div class="card">
 <h3>🐺 Erste Prüfung</h3>
 <p>Gewinne einen 3-vs-3-Kampf.</p>
-<button onclick="showPage('battle')">Kämpfen</button>
+<button onclick="page('battle')">Kämpfen</button>
 </div>
 
 <div class="card">
 <h3>⛏️ Der erste Fund</h3>
-<p>Sammle 10 Verstärkungssteine.</p>
-<button onclick="showPage('mines')">Mine besuchen</button>
+<p>Sammle Verstärkungssteine.</p>
+<button onclick="page('mines')">Mine öffnen</button>
+</div>
+
+<div class="card">
+<h3>⭐ Verstärkung</h3>
+<p>Verbessere eine Ausrüstung auf +3.</p>
+<button onclick="page('equipment')">Verbessern</button>
 </div>
 
 </div>
+
 </div>
 
 </section>
@@ -534,59 +561,95 @@ Wähle eine Fähigkeit.
 <script>
 
 let state={
-  level:1,
-  xp:0,
-  gold:250,
-  region:"Grünes Tal",
-  className:"Klingenmeister",
-  round:1,
-  turnIndex:0,
-  battleStarted:false,
-  mine:100
+ level:1,
+ xp:0,
+ gold:250,
+ stars:20,
+ region:"Grünes Tal",
+ className:"Klingenmeister",
+ weaponStars:0,
+ protection:false,
+ pity:0,
+ round:1,
+ activeIndex:0,
+ battleActive:false,
+ enemyGroup:0,
+ selectedTarget:0,
+ runes:2,
+ mines:{
+  normal:100,
+  crystal:100,
+  sky:100
+ }
 };
 
-const playerUnits=[
- {
-  id:"wolf",
-  name:"Klingenwolf",
-  icon:"🐺",
-  hp:100,
-  maxHp:100,
-  attack:24,
-  magic:8,
-  defense:10,
-  speed:30,
-  type:"Angreifer"
- },
- {
-  id:"fox",
-  name:"Runenfuchs",
-  icon:"🦊",
-  hp:85,
-  maxHp:85,
-  attack:12,
-  magic:28,
-  defense:7,
-  speed:42,
-  type:"Magier"
- },
- {
-  id:"bear",
-  name:"Eisenbär",
-  icon:"🐻",
-  hp:145,
-  maxHp:145,
-  attack:18,
-  magic:5,
-  defense:24,
-  speed:18,
-  type:"Tank"
- }
+const companions=[
+
+{
+ id:"wolf",
+ name:"Klingenwolf",
+ icon:"🐺",
+ rarity:"Normal",
+ level:1,
+ xp:0,
+ maxHp:100,
+ hp:100,
+ attack:24,
+ magic:8,
+ defense:10,
+ speed:30,
+ skills:[
+  ["Biss","basic"],
+  ["Blutrausch","bleed"]
+ ]
+},
+
+{
+ id:"fox",
+ name:"Runenfuchs",
+ icon:"🦊",
+ rarity:"Selten",
+ level:1,
+ xp:0,
+ maxHp:85,
+ hp:85,
+ attack:12,
+ magic:28,
+ defense:7,
+ speed:42,
+ skills:[
+  ["Runenblitz","magic"],
+  ["Feuerball","burn"]
+ ]
+},
+
+{
+ id:"bear",
+ name:"Eisenbär",
+ icon:"🐻",
+ rarity:"Normal",
+ level:1,
+ xp:0,
+ maxHp:145,
+ hp:145,
+ attack:18,
+ magic:5,
+ defense:24,
+ speed:18,
+ skills:[
+  ["Prankenhieb","basic"],
+  ["Eisenhaut","defense"]
+ ]
+}
+
 ];
 
-const enemyUnits=[
+let enemies=[];
+
+const enemyGroups=[
+
+[
  {
-  id:"shadow",
   name:"Schattenwolf",
   icon:"🐺",
   hp:95,
@@ -597,7 +660,6 @@ const enemyUnits=[
   speed:35
  },
  {
-  id:"fire",
   name:"Feuerluchs",
   icon:"🦊",
   hp:80,
@@ -608,7 +670,6 @@ const enemyUnits=[
   speed:40
  },
  {
-  id:"golem",
   name:"Felsgolem",
   icon:"🗿",
   hp:160,
@@ -618,316 +679,688 @@ const enemyUnits=[
   defense:28,
   speed:12
  }
+],
+
+[
+ {
+  name:"Aschenwolf",
+  icon:"🐺",
+  hp:125,
+  maxHp:125,
+  attack:28,
+  magic:8,
+  defense:12,
+  speed:38
+ },
+ {
+  name:"Feuerhexer",
+  icon:"🧙",
+  hp:105,
+  maxHp:105,
+  attack:15,
+  magic:32,
+  defense:9,
+  speed:45
+ },
+ {
+  name:"Lavakoloss",
+  icon:"🔥",
+  hp:210,
+  maxHp:210,
+  attack:31,
+  magic:5,
+  defense:30,
+  speed:14
+ }
+],
+
+[
+ {
+  name:"Frostbestie",
+  icon:"🐺",
+  hp:180,
+  maxHp:180,
+  attack:35,
+  magic:10,
+  defense:20,
+  speed:32
+ },
+ {
+  name:"Eishexer",
+  icon:"❄️",
+  hp:145,
+  maxHp:145,
+  attack:18,
+  magic:40,
+  defense:14,
+  speed:48
+ },
+ {
+  name:"Frostgolem",
+  icon:"🗿",
+  hp:260,
+  maxHp:260,
+  attack:38,
+  magic:8,
+  defense:38,
+  speed:10
+ }
+],
+
+[
+ {
+  name:"Drachenwelpe",
+  icon:"🐲",
+  hp:240,
+  maxHp:240,
+  attack:45,
+  magic:25,
+  defense:25,
+  speed:40
+ },
+ {
+  name:"Drachenmagier",
+  icon:"🐉",
+  hp:200,
+  maxHp:200,
+  attack:22,
+  magic:55,
+  defense:18,
+  speed:52
+ },
+ {
+  name:"Bergdrache",
+  icon:"🐲",
+  hp:400,
+  maxHp:400,
+  attack:55,
+  magic:20,
+  defense:48,
+  speed:16
+ }
+]
+
 ];
 
-let allUnits=[];
-let selectedTarget=0;
-
-function showPage(id,button){
+function page(id,btn){
 
  document.querySelectorAll(".page")
  .forEach(p=>p.classList.remove("active"));
 
  document.getElementById(id).classList.add("active");
 
- if(button){
+ if(btn){
   document.querySelectorAll(".nav button")
   .forEach(b=>b.classList.remove("active"));
-
-  button.classList.add("active");
+  btn.classList.add("active");
  }
 
- if(id==="battle"){
-  renderBattle();
- }
+ if(id==="battle")renderBattle();
+ if(id==="companions")renderCompanions();
 }
 
 function travel(region){
+
  state.region=region;
  document.getElementById("region").textContent=region;
- addLog("🌍 Du reist nach "+region+".");
+
+ log("🌍 Du reist nach "+region+".");
 }
 
-function selectClass(name){
+function chooseClass(name){
+
  state.className=name;
  document.getElementById("className").textContent=name;
- addLog("🧙 Klasse gewählt: "+name);
+
+ log("🧙 Klasse gewählt: "+name);
 }
 
-function resetBattle(){
+function startBattle(){
 
- playerUnits[0].hp=100;
- playerUnits[1].hp=85;
- playerUnits[2].hp=145;
-
- enemyUnits[0].hp=95;
- enemyUnits[1].hp=80;
- enemyUnits[2].hp=160;
+ companions.forEach(c=>{
+  c.hp=c.maxHp;
+ });
 
  state.round=1;
- state.turnIndex=0;
- state.battleStarted=true;
+ state.activeIndex=0;
+ state.enemyGroup=0;
+ state.selectedTarget=0;
+ state.battleActive=true;
+
+ loadEnemyGroup();
 
  document.getElementById("battleLog").innerHTML="";
+ document.getElementById("loot").innerHTML="Noch keine Beute.";
 
- createInitiative();
-
- addLog("⚔️ Der Kampf beginnt!");
- addLog("🎯 Initiative bestimmt die Reihenfolge.");
+ log("⚔️ Kampf beginnt!");
+ log("🎯 Initiative wird berechnet.");
 
  renderBattle();
 }
 
+function loadEnemyGroup(){
+
+ enemies=enemyGroups[state.enemyGroup].map(e=>({
+  ...e,
+  status:[],
+  statusTurns:{}
+ }));
+
+ createInitiative();
+}
+
 function createInitiative(){
 
- allUnits=[
-  ...playerUnits.map(u=>({...u,team:"player"})),
-  ...enemyUnits.map(u=>({...u,team:"enemy"}))
+ const list=[
+  ...companions.map((u,i)=>({
+   ...u,
+   team:"player",
+   index:i
+  })),
+  ...enemies.map((u,i)=>({
+   ...u,
+   team:"enemy",
+   index:i
+  }))
  ];
 
- allUnits.sort((a,b)=>b.speed-a.speed);
+ list.sort((a,b)=>b.speed-a.speed);
 
  document.getElementById("initiative").innerHTML=
- allUnits.map((u,i)=>
+ list.map((u,i)=>
  `<span>${i+1}. ${u.icon} ${u.name}</span>`
  ).join("");
 }
 
 function renderBattle(){
 
- renderTeam("playerTeam",playerUnits,false);
- renderTeam("enemyTeam",enemyUnits,true);
+ renderTeam(
+  "playerTeam",
+  companions,
+  false
+ );
 
- if(!state.battleStarted){
-  resetBattle();
- }
+ renderTeam(
+  "enemyTeam",
+  enemies,
+  true
+ );
+
+ renderSkills();
+
+ const active=companions[state.activeIndex];
+
+ document.getElementById("activeUnit").textContent=
+ active ? active.name : "–";
+
+ document.getElementById("round").textContent=
+ state.round;
 }
 
-function renderTeam(elementId,units,isEnemy){
+function renderTeam(id,units,isEnemy){
 
- const container=document.getElementById(elementId);
+ document.getElementById(id).innerHTML=
+ units.map((u,i)=>{
 
- container.innerHTML=units.map((u,i)=>{
+  const percent=
+   Math.max(0,(u.hp/u.maxHp)*100);
 
-  const percent=Math.max(0,(u.hp/u.maxHp)*100);
+  const statuses=
+   u.status?
+   u.status.map(s=>
+    `<span class="status">${s}</span>`
+   ).join("")
+   :"";
 
   return `
-  <div class="card unit ${isEnemy?"enemy":""} ${u.hp<=0?"dead":""}"
-       id="${isEnemy?"enemy":"player"}-${i}"
-       onclick="${isEnemy?`selectTarget(${i})`:''}">
+  <div
+   id="${isEnemy?"enemy":"player"}-${i}"
+   class="card unit ${isEnemy?"enemy":""}
+   ${u.hp<=0?"dead":""}
+   ${!isEnemy&&i===state.activeIndex?"selected":""}
+   onclick="${isEnemy?`selectEnemy(${i})`:''}"
+  >
 
-   <div class="unit-icon">${u.icon}</div>
+  <div class="bigicon">${u.icon}</div>
 
-   <h3>${u.name}</h3>
+  <h3>${u.name}</h3>
 
-   <p>${u.type||"Gegner"}</p>
+  <p>Lv. ${u.level||1} ${u.rarity||""}</p>
 
-   <p>${Math.max(0,Math.round(u.hp))}/${u.maxHp} HP</p>
+  <p>
+  ❤️ ${Math.max(0,Math.round(u.hp))}
+  / ${u.maxHp}
+  </p>
 
-   <div class="hpbar">
-    <div class="hp" style="width:${percent}%"></div>
-   </div>
+  <div class="hpbar">
+   <div class="hpfill" style="width:${percent}%"></div>
+  </div>
+
+  <div>${statuses}</div>
 
   </div>
   `;
  }).join("");
 }
 
-function selectTarget(index){
+function renderSkills(){
 
- if(enemyUnits[index].hp<=0)return;
+ const unit=companions[state.activeIndex];
 
- selectedTarget=index;
+ if(!unit || unit.hp<=0){
 
- document.querySelectorAll(".enemy")
- .forEach(e=>e.classList.remove("target"));
+  document.getElementById("skills").innerHTML=
+  "<span class='small'>Kein aktiver Begleiter.</span>";
 
- const target=document.getElementById("enemy-"+index);
-
- if(target)target.classList.add("target");
-
- document.getElementById("actionText").textContent=
- "Ziel: "+enemyUnits[index].name;
-}
-
-function getAlivePlayer(){
-
- return playerUnits.filter(u=>u.hp>0);
-}
-
-function getAliveEnemies(){
-
- return enemyUnits.filter(u=>u.hp>0);
-}
-
-function useSkill(skill){
-
- if(getAlivePlayer().length===0 || getAliveEnemies().length===0)return;
-
- const attacker=
-  playerUnits.find(u=>u.hp>0);
-
- const target=enemyUnits[selectedTarget];
-
- if(!target || target.hp<=0){
-  selectedTarget=enemyUnits.findIndex(u=>u.hp>0);
+  return;
  }
 
- const actualTarget=enemyUnits[selectedTarget];
+ document.getElementById("skills").innerHTML=
+ unit.skills.map(s=>
+ `<button onclick="useSkill('${s[1]}')">✨ ${s[0]}</button>`
+ ).join("");
+}
 
- if(!actualTarget)return;
+function selectEnemy(index){
 
- animateAttack(attacker,actualTarget);
+ if(!enemies[index]||enemies[index].hp<=0)return;
+
+ state.selectedTarget=index;
+
+ document.querySelectorAll(".enemy")
+ .forEach(x=>x.classList.remove("selected"));
+
+ const el=document.getElementById("enemy-"+index);
+
+ if(el)el.classList.add("selected");
+
+ document.getElementById("battleStatus").textContent=
+ "Ziel: "+enemies[index].name;
+}
+
+function useSkill(type){
+
+ if(!state.battleActive)return;
+
+ const attacker=findActiveCompanion();
+
+ if(!attacker)return;
+
+ let target=enemies[state.selectedTarget];
+
+ if(!target||target.hp<=0){
+
+  state.selectedTarget=
+   enemies.findIndex(e=>e.hp>0);
+
+  target=enemies[state.selectedTarget];
+ }
+
+ if(!target)return;
+
+ animate(attacker,target);
 
  let damage=0;
 
- if(skill==="basic"){
+ if(type==="basic"){
+
   damage=Math.max(
    5,
-   attacker.attack-actualTarget.defense+
+   attacker.attack-target.defense+
    random(5,12)
   );
 
-  addLog(
-   `⚔️ ${attacker.name} greift ${actualTarget.name} an und verursacht ${damage} Schaden.`
+  target.hp=Math.max(0,target.hp-damage);
+
+  log(
+   `⚔️ ${attacker.name} trifft ${target.name} für ${damage} Schaden.`
   );
  }
 
- if(skill==="special"){
+ if(type==="magic"){
 
   damage=Math.max(
-   10,
-   attacker.attack+
+   8,
    attacker.magic+
-   random(10,25)-
-   actualTarget.defense
+   random(10,20)-
+   Math.floor(target.defense/2)
   );
 
-  addLog(
-   `🔥 ${attacker.name} setzt eine Spezialfähigkeit ein und verursacht ${damage} Schaden!`
+  target.hp=Math.max(0,target.hp-damage);
+
+  log(
+   `🔮 ${attacker.name} wirkt Runenmagie auf ${target.name}: ${damage} Schaden.`
   );
  }
 
- if(skill==="defense"){
+ if(type==="burn"){
 
-  attacker.defense+=10;
-
-  addLog(
-   `🛡️ ${attacker.name} geht in Verteidigungsstellung.`
+  damage=Math.max(
+   8,
+   attacker.magic-
+   Math.floor(target.defense/3)
   );
 
-  setTimeout(enemyTurn,500);
-  return;
+  target.hp=Math.max(0,target.hp-damage);
+
+  target.status.push("🔥 Brennen");
+  target.statusTurns["🔥 Brennen"]=3;
+
+  log(
+   `🔥 ${target.name} brennt und erleidet ${damage} Sofortschaden.`
+  );
  }
 
- if(skill==="heal"){
+ if(type==="bleed"){
 
-  const heal=Math.min(
-   attacker.maxHp-attacker.hp,
-   20+attacker.magic
+  damage=Math.max(
+   8,
+   attacker.attack-
+   Math.floor(target.defense/2)
   );
 
-  attacker.hp+=heal;
+  target.hp=Math.max(0,target.hp-damage);
 
-  addLog(
-   `💚 ${attacker.name} heilt sich um ${heal} HP.`
+  target.status.push("🩸 Blutung");
+  target.statusTurns["🩸 Blutung"]=3;
+
+  log(
+   `🩸 ${target.name} beginnt zu bluten.`
   );
-
-  renderBattle();
-
-  setTimeout(enemyTurn,600);
-  return;
  }
 
- actualTarget.hp=Math.max(0,actualTarget.hp-damage);
+ if(type==="defense"){
+
+  attacker.defense+=15;
+
+  log(
+   `🛡️ ${attacker.name} erhöht seine Verteidigung.`
+  );
+ }
+
+ checkDefeated(target);
 
  renderBattle();
 
- if(actualTarget.hp<=0){
-  addLog(`💀 ${actualTarget.name} wurde besiegt!`);
+ if(checkWin())return;
+
+ setTimeout(enemyTurn,650);
+}
+
+function findActiveCompanion(){
+
+ for(let i=0;i<companions.length;i++){
+
+  const index=
+   (state.activeIndex+i)%companions.length;
+
+  if(companions[index].hp>0){
+
+   state.activeIndex=index;
+
+   return companions[index];
+  }
  }
 
- checkBattleEnd();
-
- if(getAliveEnemies().length>0){
-  setTimeout(enemyTurn,700);
- }
+ return null;
 }
 
 function enemyTurn(){
 
- if(getAliveEnemies().length===0)return;
+ if(!state.battleActive)return;
+
+ const alive=enemies.filter(e=>e.hp>0);
+
+ if(!alive.length)return;
 
  const enemy=
-  enemyUnits.find(u=>u.hp>0);
+  alive[random(0,alive.length-1)];
 
  const targets=
-  getAlivePlayer();
+  companions.filter(c=>c.hp>0);
 
- if(targets.length===0)return;
+ if(!targets.length){
+
+  defeat();
+  return;
+ }
 
  const target=
   targets[random(0,targets.length-1)];
 
- animateAttack(enemy,target);
+ animate(enemy,target);
 
- const damage=Math.max(
+ let damage=Math.max(
   4,
   enemy.attack-target.defense+
-  random(4,10)
+  random(4,11)
  );
 
- target.hp=Math.max(0,target.hp-damage);
+ target.hp=
+  Math.max(0,target.hp-damage);
 
- addLog(
-  `👹 ${enemy.name} trifft ${target.name} für ${damage} Schaden.`
+ log(
+  `👹 ${enemy.name} greift ${target.name} an: ${damage} Schaden.`
  );
+
+ applyStatusDamage(target);
+
+ checkDefeated(target);
 
  renderBattle();
 
- if(target.hp<=0){
-  addLog(`💀 ${target.name} wurde besiegt!`);
- }
+ if(checkWin())return;
 
- checkBattleEnd();
 }
 
-function animateAttack(attacker,target){
+function applyStatusDamage(unit){
 
- const attackerIsPlayer=
-  playerUnits.includes(attacker);
+ if(!unit.status)return;
 
- const targetIsPlayer=
-  playerUnits.includes(target);
+ if(unit.status.includes("🔥 Brennen")){
 
- const attackerElement=
+  const dmg=6;
+
+  unit.hp=Math.max(0,unit.hp-dmg);
+
+  log(`🔥 ${unit.name} erleidet ${dmg} Brandschaden.`);
+
+  unit.statusTurns["🔥 Brennen"]--;
+
+  if(unit.statusTurns["🔥 Brennen"]<=0){
+
+   unit.status=
+    unit.status.filter(s=>s!=="🔥 Brennen");
+  }
+ }
+
+ if(unit.status.includes("🩸 Blutung")){
+
+  const dmg=5;
+
+  unit.hp=Math.max(0,unit.hp-dmg);
+
+  log(`🩸 ${unit.name} erleidet ${dmg} Blutungsschaden.`);
+
+  unit.statusTurns["🩸 Blutung"]--;
+
+  if(unit.statusTurns["🩸 Blutung"]<=0){
+
+   unit.status=
+    unit.status.filter(s=>s!=="🩸 Blutung");
+  }
+ }
+}
+
+function checkDefeated(unit){
+
+ if(unit.hp<=0){
+
+  unit.hp=0;
+
+  log(`💀 ${unit.name} wurde besiegt.`);
+
+  if(companions.includes(unit)){
+
+   const next=
+    companions.findIndex(c=>c.hp>0);
+
+   if(next>=0)state.activeIndex=next;
+  }
+ }
+}
+
+function checkWin(){
+
+ if(enemies.every(e=>e.hp<=0)){
+
+  state.battleActive=false;
+
+  log("🏆 SIEG!");
+
+  const xp=35+state.enemyGroup*15;
+  const gold=50+state.enemyGroup*25;
+
+  gainXP(xp);
+
+  state.gold+=gold;
+
+  updateStats();
+
+  log(`🎁 Belohnung: +${xp} XP und +${gold} Gold.`);
+
+  generateLoot();
+
+  return true;
+ }
+
+ if(companions.every(c=>c.hp<=0)){
+
+  defeat();
+
+  return true;
+ }
+
+ return false;
+}
+
+function defeat(){
+
+ state.battleActive=false;
+
+ log("💀 Deine Gruppe wurde besiegt.");
+
+ document.getElementById("battleStatus").textContent=
+ "NIEDERLAGE";
+}
+
+function nextEnemyGroup(){
+
+ if(state.battleActive){
+
+  log("⚠️ Der aktuelle Kampf ist noch nicht beendet.");
+
+  return;
+ }
+
+ if(state.enemyGroup>=enemyGroups.length-1){
+
+  log("🏆 Keine weitere Gegnergruppe verfügbar.");
+
+  return;
+ }
+
+ state.enemyGroup++;
+
+ companions.forEach(c=>{
+  c.hp=c.maxHp;
+ });
+
+ state.battleActive=true;
+ state.round=1;
+ state.selectedTarget=0;
+
+ loadEnemyGroup();
+
+ log(
+  `⚔️ Gegnergruppe ${state.enemyGroup+1} erscheint!`
+ );
+
+ renderBattle();
+}
+
+function endTurn(){
+
+ if(!state.battleActive)return;
+
+ state.round++;
+
+ log(`🔄 Runde ${state.round} beginnt.`);
+
+ companions.forEach(c=>{
+
+  if(c.hp>0){
+
+   c.status&&applyStatusDamage(c);
+
+   c.defense=
+    Math.max(
+     1,
+     c.defense-(c.defense>20?15:0)
+    );
+  }
+ });
+
+ enemies.forEach(e=>{
+
+  if(e.hp>0){
+
+   applyStatusDamage(e);
+
+  }
+ });
+
+ renderBattle();
+
+ setTimeout(enemyTurn,500);
+}
+
+function animate(attacker,target){
+
+ const attackerPlayer=
+  companions.includes(attacker);
+
+ const targetPlayer=
+  companions.includes(target);
+
+ const a=
   document.getElementById(
-   `${attackerIsPlayer?"player":"enemy"}-${getIndex(attacker)}`
+   `${attackerPlayer?"player":"enemy"}-${getIndex(attacker)}`
   );
 
- const targetElement=
+ const t=
   document.getElementById(
-   `${targetIsPlayer?"player":"enemy"}-${getIndex(target)}`
+   `${targetPlayer?"player":"enemy"}-${getIndex(target)}`
   );
 
- if(attackerElement){
+ if(a){
 
-  attackerElement.classList.remove("attacking");
+  a.classList.remove("attackAnim");
 
-  void attackerElement.offsetWidth;
+  void a.offsetWidth;
 
-  attackerElement.classList.add("attacking");
+  a.classList.add("attackAnim");
  }
 
  setTimeout(()=>{
 
-  if(targetElement){
+  if(t){
 
-   targetElement.classList.remove("hit");
+   t.classList.remove("hitAnim");
 
-   void targetElement.offsetWidth;
+   void t.offsetWidth;
 
-   targetElement.classList.add("hit");
+   t.classList.add("hitAnim");
   }
 
  },220);
@@ -935,81 +1368,374 @@ function animateAttack(attacker,target){
 
 function getIndex(unit){
 
- if(playerUnits.includes(unit)){
-  return playerUnits.indexOf(unit);
+ if(companions.includes(unit))
+  return companions.indexOf(unit);
+
+ return enemies.indexOf(unit);
+}
+
+function gainXP(amount){
+
+ state.xp+=amount;
+
+ while(state.xp>=100){
+
+  state.xp-=100;
+  state.level++;
+
+  log(
+   `✨ Levelaufstieg! Du bist jetzt Level ${state.level}.`
+  );
  }
 
- return enemyUnits.indexOf(unit);
+ document.getElementById("playerXP").textContent=
+  state.xp;
+
+ document.getElementById("playerLevel").textContent=
+  state.level;
 }
 
-function endRound(){
+function generateLoot(){
 
- state.round++;
+ const roll=Math.random();
 
- playerUnits.forEach(u=>{
-  if(u.hp>0){
-   u.defense=Math.max(5,u.defense-10);
-  }
- });
+ let item;
 
- addLog(`🔄 Runde ${state.round} beginnt.`);
+ if(roll<.05){
 
- document.getElementById("battleStatus").textContent=
- "Runde "+state.round;
+  item={
+   name:"Legendärer Gegenstand",
+   rarity:"legendary",
+   icon:"🟠"
+  };
 
- renderBattle();
+ }else if(roll<.15){
+
+  item={
+   name:"Epischer Gegenstand",
+   rarity:"epic",
+   icon:"🟣"
+  };
+
+ }else if(roll<.25){
+
+  item={
+   name:"Seltener Gegenstand",
+   rarity:"rare",
+   icon:"🔵"
+  };
+
+ }else{
+
+  item={
+   name:"Normaler Gegenstand",
+   rarity:"",
+   icon:"⚪"
+  };
+ }
+
+ document.getElementById("loot").innerHTML=
+ `
+ <h3>${item.icon} Beute erhalten!</h3>
+ <p class="${item.rarity}">
+ ${item.name}
+ </p>
+ `;
+
+ log(`🎁 Beute: ${item.name}`);
 }
 
-function checkBattleEnd(){
+function enhanceWeapon(){
 
- if(getAliveEnemies().length===0){
+ const current=state.weaponStars;
 
-  addLog("🏆 Sieg! Du hast den Kampf gewonnen!");
+ if(current>=10){
 
-  document.getElementById("battleStatus").textContent=
-   "🏆 SIEG";
-
-  state.gold+=50;
-  state.xp+=35;
-
-  document.getElementById("gold").textContent=state.gold;
-  document.getElementById("xp").textContent=state.xp;
-
-  addLog("🎁 Belohnung: +50 Gold, +35 XP");
-
-  if(state.xp>=100){
-
-   state.xp-=100;
-   state.level++;
-
-   document.getElementById("playerLevel").textContent=state.level;
-
-   addLog(`✨ Levelaufstieg! Du bist jetzt Level ${state.level}.`);
-  }
+  log("✨ Die Waffe ist bereits +10.");
 
   return;
  }
 
- if(getAlivePlayer().length===0){
+ const rates=[
+  1.00,
+  1.00,
+  .95,
+  .90,
+  .85,
+  .75,
+  .55,
+  .40,
+  .25,
+  .12
+ ];
 
-  addLog("💀 Niederlage. Deine Gruppe wurde besiegt.");
+ let chance=rates[current];
 
-  document.getElementById("battleStatus").textContent=
-   "💀 NIEDERLAGE";
+ if(current===9){
+
+  chance=.12+
+   state.pity*.03;
+
+  if(state.pity>=10)
+   chance=1;
+ }
+
+ if(state.protection && state.runes<=0){
+
+  state.protection=false;
+ }
+
+ if(state.protection)
+  chance=Math.min(1,chance+.15);
+
+ const success=Math.random()<chance;
+
+ if(success){
+
+  state.weaponStars++;
+
+  state.pity=0;
+
+  log(
+   `⭐ Verstärkung erfolgreich! Waffe ist jetzt +${state.weaponStars}.`
+  );
+
+ }else{
+
+  state.pity++;
+
+  if(current>=4){
+
+   state.weaponStars=
+    Math.max(0,state.weaponStars-1);
+
+   log(
+    `❌ Verstärkung fehlgeschlagen. Die Waffe fällt auf +${state.weaponStars}.`
+   );
+
+  }else{
+
+   log(
+    `❌ Verstärkung fehlgeschlagen. Die Stufe bleibt +${state.weaponStars}.`
+   );
+  }
+
+  if(state.protection){
+
+   state.runes--;
+
+   state.weaponStars=current;
+
+   log("🛡️ Schutzrune verhindert den Abstieg.");
+
+   if(state.runes<=0){
+
+    state.protection=false;
+   }
+  }
+ }
+
+ updateEquipment();
+ updateStats();
+}
+
+function toggleProtection(){
+
+ if(state.runes<=0){
+
+  log("❌ Keine Schutzrunen vorhanden.");
+
+  return;
+ }
+
+ state.protection=!state.protection;
+
+ document.getElementById("protection").textContent=
+  state.protection?"AN":"AUS";
+}
+
+function updateEquipment(){
+
+ document.getElementById("weaponStars").textContent=
+  "★"+state.weaponStars;
+
+ document.getElementById("pity").textContent=
+  state.pity;
+}
+
+function updateStats(){
+
+ document.getElementById("gold").textContent=
+  state.gold;
+
+ document.getElementById("stars").textContent=
+  state.stars;
+
+ document.getElementById("dust").textContent=
+  state.stars;
+
+ document.getElementById("runes").textContent=
+  state.runes;
+}
+
+function mine(type){
+
+ let key=type;
+
+ if(state.mines[key]<=0){
+
+  log("⛏️ Diese Mine ist leer.");
+
+  return;
+ }
+
+ const amount=10;
+
+ state.mines[key]=
+  Math.max(0,state.mines[key]-amount);
+
+ if(type==="normal"){
+
+  state.stars+=amount;
+
+  document.getElementById("mine1").textContent=
+   state.mines[key];
+
+  log(`⛏️ +${amount} Sternsplitter gesammelt.`);
+
+ }
+
+ if(type==="crystal"){
+
+  document.getElementById("crystal").textContent=
+   parseInt(document.getElementById("crystal").textContent)+amount;
+
+  document.getElementById("mine2").textContent=
+   state.mines[key];
+
+  log(`💎 +${amount} Sternkristalle gesammelt.`);
+
+ }
+
+ if(type==="sky"){
+
+  document.getElementById("skyCrystal").textContent=
+   parseInt(document.getElementById("skyCrystal").textContent)+amount;
+
+  document.getElementById("mine3").textContent=
+   state.mines[key];
+
+  log(`🔷 +${amount} Himmelskristalle gesammelt.`);
+ }
+
+ updateStats();
+
+ if(state.mines[key]===0){
+
+  log("🔄 Die Mine ist leer und wird später wieder aufgefüllt.");
+
+  setTimeout(()=>{
+
+   state.mines[key]=100;
+
+   if(type==="normal")
+    document.getElementById("mine1").textContent=100;
+
+   if(type==="crystal")
+    document.getElementById("mine2").textContent=100;
+
+   if(type==="sky")
+    document.getElementById("mine3").textContent=100;
+
+   log("✨ Eine Mine wurde wieder aufgefüllt.");
+
+  },10000);
  }
 }
 
-function addLog(text){
+function renderCompanions(){
 
- const log=document.getElementById("battleLog");
+ document.getElementById("companionCards").innerHTML=
+ companions.map(c=>{
+
+  const xpPercent=(c.xp/100)*100;
+
+  return `
+  <div class="card">
+
+  <div class="bigicon">${c.icon}</div>
+
+  <h3>${c.name}</h3>
+
+  <p class="${rarityClass(c.rarity)}">
+   ${c.rarity}
+  </p>
+
+  <p>Level ${c.level}</p>
+
+  <div class="xpbar">
+   <div class="xpfill"
+   style="width:${xpPercent}%"></div>
+  </div>
+
+  <p class="small">
+   XP ${c.xp}/100
+  </p>
+
+  <p>
+   ❤️ ${c.maxHp}
+   ⚔️ ${c.attack}
+   🔮 ${c.magic}
+   🛡️ ${c.defense}
+   ⚡ ${c.speed}
+  </p>
+
+  <p>
+   ${c.skills.map(s=>`✨ ${s[0]}`).join("<br>")}
+  </p>
+
+  </div>
+  `;
+ }).join("");
+}
+
+function rarityClass(r){
+
+ if(r==="Selten")return"rare";
+ if(r==="Episch")return"epic";
+ if(r==="Legendär")return"legendary";
+ if(r==="Mythisch")return"mythic";
+
+ return"";
+}
+
+function fusionInfo(){
+
+ alert(
+ `Begleiter-Fusion:
+
+5× Normal → 1× Selten
+5× Selten → 1× Episch
+5× Episch → 1× Legendär
+5× Legendär → 1× Mythisch
+
+Eine spezielle Erweckung kann bei der Mythisch-Stufe auftreten.`
+ );
+}
+
+function log(text){
+
+ const box=document.getElementById("battleLog");
+
+ if(!box)return;
 
  const line=document.createElement("div");
 
  line.textContent=text;
 
- log.appendChild(line);
+ box.appendChild(line);
 
- log.scrollTop=log.scrollHeight;
+ box.scrollTop=box.scrollHeight;
 }
 
 function random(min,max){
@@ -1019,40 +1745,10 @@ function random(min,max){
  )+min;
 }
 
-function mine(id){
-
- if(state.mine<=0){
-
-  addLog("⛏️ Diese Mine ist leer.");
-
-  return;
- }
-
- const amount=Math.min(10,state.mine);
-
- state.mine-=amount;
-
- document.getElementById("mine1").textContent=state.mine;
-
- addLog(`⛏️ Du hast ${amount} Verstärkungssteine gesammelt.`);
-
- if(state.mine===0){
-
-  addLog("🔄 Die Mine ist leer und wird später wieder aufgefüllt.");
-
-  setTimeout(()=>{
-
-   state.mine=100;
-
-   document.getElementById("mine1").textContent=100;
-
-   addLog("✨ Die Verstärkungssteinmine ist wieder verfügbar.");
-
-  },10000);
- }
-}
-
-resetBattle();
+renderCompanions();
+startBattle();
+updateStats();
+updateEquipment();
 
 </script>
 
