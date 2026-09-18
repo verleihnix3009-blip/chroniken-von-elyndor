@@ -2,670 +2,1057 @@
 <html lang="de">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chroniken von Elyndor</title>
 
 <style>
 *{box-sizing:border-box}
+
 body{
- margin:0;
- background:#090d15;
- color:#e8edf5;
- font-family:Arial,sans-serif;
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#0b1020;
+  color:#fff;
 }
-header{
- background:linear-gradient(135deg,#172238,#0b101b);
- padding:18px;
- border-bottom:1px solid #35425a;
- position:sticky;
- top:0;
- z-index:5;
+
+button{
+  border:0;
+  border-radius:10px;
+  padding:11px 15px;
+  font-weight:bold;
+  cursor:pointer;
+  background:#27355f;
+  color:white;
 }
+
+button:hover{filter:brightness(1.2)}
+button:disabled{opacity:.4;cursor:not-allowed}
+
+.header{
+  padding:15px;
+  background:#151d38;
+  border-bottom:1px solid #34416b;
+}
+
 .title{
- font-size:25px;
- font-weight:bold;
+  font-size:25px;
+  font-weight:bold;
 }
-.subtitle{color:#98a6bd;margin-top:5px}
+
 .stats{
- display:flex;
- flex-wrap:wrap;
- gap:12px;
- margin-top:14px;
-}
-.stat{
- background:#111827;
- border:1px solid #344157;
- padding:8px 12px;
- border-radius:9px;
-}
-.gold{color:#e5c55e}
-
-nav{
- display:flex;
- overflow-x:auto;
- background:#101624;
- border-bottom:1px solid #303b50;
-}
-nav button{
- flex:1;
- min-width:105px;
- border:0;
- border-radius:0;
- background:transparent;
- color:#aebbd0;
- padding:14px 10px;
-}
-nav button.active{
- color:#fff;
- background:#202b40;
+  margin-top:8px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  color:#b9c5ff;
 }
 
-main{
- max-width:1000px;
- margin:auto;
- padding:16px;
+.nav{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  padding:10px;
+  background:#11172b;
 }
-.section{display:none}
-.section.active{display:block}
+
+.nav button.active{
+  background:#536dff;
+}
+
+.page{
+  display:none;
+  padding:15px;
+  max-width:1100px;
+  margin:auto;
+}
+
+.page.active{display:block}
 
 .panel{
- background:#131a27;
- border:1px solid #303b50;
- border-radius:14px;
- padding:18px;
- margin-bottom:16px;
+  background:#151d38;
+  border:1px solid #34416b;
+  border-radius:14px;
+  padding:15px;
+  margin-bottom:15px;
 }
-.panel h2{margin-top:0}
 
-.grid{
- display:grid;
- grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
- gap:12px;
+.region-grid,
+.equipment-grid,
+.mine-grid,
+.quest-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+  gap:10px;
 }
 
 .card{
- background:#1a2333;
- border:1px solid #354157;
- border-radius:12px;
- padding:15px;
+  background:#202a4b;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid #36446f;
 }
 
-.card h3{margin-top:0}
-
-button.action{
- background:#26344b;
- color:#fff;
- border:1px solid #465671;
- border-radius:9px;
- padding:11px 14px;
- margin-top:8px;
-}
-button.action:active{transform:scale(.98)}
-
-.progress{
- height:10px;
- background:#080c13;
- border-radius:10px;
- overflow:hidden;
- margin:8px 0 14px;
-}
-.progress span{
- display:block;
- height:100%;
- background:#647ea8;
- width:12%;
+.hpbar{
+  height:10px;
+  background:#101522;
+  border-radius:10px;
+  overflow:hidden;
+  margin-top:7px;
 }
 
-.slot{
- padding:13px;
- border:1px solid #39475e;
- border-radius:9px;
- background:#101722;
+.hp{
+  height:100%;
+  background:#37d66b;
+  transition:width .35s;
 }
 
-.quality-normal{color:#c7ceda}
-.quality-rare{color:#4ea6ff}
-.quality-epic{color:#b477ff}
-.quality-legendary{color:#ffb44d}
-.quality-mythic{color:#ff6fc8}
+.enemy .hp{background:#ef5360}
 
-.mine{
- border-left:4px solid #697e9e;
-}
-.mine.empty{
- opacity:.55;
+.unit{
+  position:relative;
+  min-height:190px;
+  transition:transform .2s,filter .2s,opacity .3s;
 }
 
-.quest{
- border-left:4px solid #a88745;
+.unit.dead{
+  opacity:.35;
+  filter:grayscale(1);
 }
 
-.notice{
- padding:12px;
- background:#0e1521;
- border-radius:9px;
- color:#aebbd0;
- margin-top:12px;
+.unit.attacking{
+  animation:attackMove .45s ease;
 }
 
-ul{
- padding-left:20px;
- line-height:1.7;
+.unit.hit{
+  animation:hitShake .4s ease;
+}
+
+@keyframes attackMove{
+  0%{transform:translateX(0)}
+  45%{transform:translateX(35px) scale(1.04)}
+  100%{transform:translateX(0)}
+}
+
+@keyframes hitShake{
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-10px)}
+  40%{transform:translateX(10px)}
+  60%{transform:translateX(-8px)}
+  80%{transform:translateX(5px)}
+}
+
+.unit-icon{
+  font-size:52px;
+  text-align:center;
+  margin:8px;
+}
+
+.team{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+}
+
+.vs{
+  text-align:center;
+  font-size:28px;
+  font-weight:bold;
+  padding:15px;
+  color:#ffd76a;
+}
+
+.battle-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:12px;
+}
+
+.skill{
+  background:#3a4db0;
+}
+
+.skill.fire{background:#9b3e37}
+.skill.def{background:#3c7355}
+.skill.heal{background:#527eaf}
+
+.target{
+  outline:3px solid #ffd34d;
+  box-shadow:0 0 20px #ffd34d;
+}
+
+.log{
+  height:180px;
+  overflow-y:auto;
+  background:#090e1b;
+  border-radius:10px;
+  padding:10px;
+  font-size:14px;
+}
+
+.log div{
+  padding:4px 0;
+  border-bottom:1px solid #1d2741;
+}
+
+.turn{
+  font-size:18px;
+  font-weight:bold;
+  color:#ffd76a;
+}
+
+.initiative{
+  display:flex;
+  gap:6px;
+  overflow-x:auto;
+  padding:8px 0;
+}
+
+.initiative span{
+  background:#27355f;
+  padding:7px 10px;
+  border-radius:8px;
+  white-space:nowrap;
+}
+
+.reward{
+  color:#7ff59d;
+  font-weight:bold;
 }
 </style>
 </head>
 
 <body>
 
-<header>
- <div class="title">⚔️ Chroniken von Elyndor</div>
- <div class="subtitle">Das Reich der alten Mächte</div>
-
- <div class="stats">
-  <div class="stat">Level <strong id="level">1</strong></div>
-  <div class="stat">XP <strong id="xp">0 / 100</strong></div>
-  <div class="stat gold">💰 <strong id="gold">250</strong></div>
-  <div class="stat">📍 <strong id="region">Grünes Tal</strong></div>
- </div>
+<header class="header">
+  <div class="title">⚔️ Chroniken von Elyndor</div>
+  <div class="stats">
+    <span>Level <b id="playerLevel">1</b></span>
+    <span>XP <b id="xp">0</b>/100</span>
+    <span>💰 <b id="gold">250</b></span>
+    <span>🌍 <b id="region">Grünes Tal</b></span>
+  </div>
 </header>
 
-<nav>
- <button class="active" onclick="showTab('world',this)">🗺️ Welt</button>
- <button onclick="showTab('character',this)">🧙 Charakter</button>
- <button onclick="showTab('inventory',this)">🎒 Inventar</button>
- <button onclick="showTab('mines',this)">⛏️ Minen</button>
- <button onclick="showTab('quests',this)">📜 Quests</button>
+<nav class="nav">
+  <button class="active" onclick="showPage('world',this)">🌍 Welt</button>
+  <button onclick="showPage('character',this)">🧙 Charakter</button>
+  <button onclick="showPage('companions',this)">🐺 Begleiter</button>
+  <button onclick="showPage('battle',this)">⚔️ Kampf</button>
+  <button onclick="showPage('inventory',this)">🎒 Inventar</button>
+  <button onclick="showPage('mines',this)">⛏️ Minen</button>
+  <button onclick="showPage('quests',this)">📜 Quests</button>
 </nav>
 
-<main>
-
 <!-- WELT -->
+<section id="world" class="page active">
 
-<section id="world" class="section active">
+<div class="panel">
+<h2>🌍 Welt von Elyndor</h2>
+<p>Wähle deine Region.</p>
 
- <div class="panel">
-  <h2>🗺️ Welt von Elyndor</h2>
-  <p>Wähle deinen aktuellen Aufenthaltsort.</p>
+<div class="region-grid">
+<div class="card">
+<h3>🌿 Grünes Tal</h3>
+<p>Empfohlen: Lv. 1–30</p>
+<button onclick="travel('Grünes Tal')">Betreten</button>
+</div>
 
-  <div class="grid">
+<div class="card">
+<h3>🔥 Verbrannte Ebene</h3>
+<p>Empfohlen: Lv. 30–50</p>
+<button onclick="travel('Verbrannte Ebene')">Betreten</button>
+</div>
 
-   <div class="card">
-    <h3>🌲 Grünes Tal</h3>
-    <p>Die Startregion für neue Abenteurer.</p>
-    <button class="action" onclick="travel('Grünes Tal')">Reisen</button>
-   </div>
+<div class="card">
+<h3>❄️ Frostlande</h3>
+<p>Empfohlen: Lv. 50–70</p>
+<button onclick="travel('Frostlande')">Betreten</button>
+</div>
 
-   <div class="card">
-    <h3>🔥 Verbrannte Ebene</h3>
-    <p>Eine gefährliche Landschaft voller Feuerkreaturen.</p>
-    <button class="action" onclick="travel('Verbrannte Ebene')">Reisen</button>
-   </div>
+<div class="card">
+<h3>🐉 Drachengebiet</h3>
+<p>Empfohlen: Lv. 70–100</p>
+<button onclick="travel('Drachengebiet')">Betreten</button>
+</div>
 
-   <div class="card">
-    <h3>❄️ Frostlande</h3>
-    <p>Eisige Gebiete mit seltenen Ressourcen.</p>
-    <button class="action" onclick="travel('Frostlande')">Reisen</button>
-   </div>
+<div class="card">
+<h3>✨ Astralgebiet</h3>
+<p>Endgame</p>
+<button onclick="travel('Astralgebiet')">Betreten</button>
+</div>
+</div>
+</div>
 
-   <div class="card">
-    <h3>🐉 Drachengebiet</h3>
-    <p>Heimat mächtiger Drachen und Bosse.</p>
-    <button class="action" onclick="travel('Drachengebiet')">Reisen</button>
-   </div>
-
-   <div class="card">
-    <h3>🌌 Astralgebiet</h3>
-    <p>Eine Endgame-Region für die stärksten Helden.</p>
-    <button class="action" onclick="travel('Astralgebiet')">Reisen</button>
-   </div>
-
-  </div>
-
-  <div id="travelMessage" class="notice">
-   Du befindest dich im Grünen Tal.
-  </div>
- </div>
-
- <div class="panel">
-  <h2>📍 Aktueller Ort</h2>
-  <div class="card">
-   <h3 id="currentLocation">Grünes Tal</h3>
-   <p>Hier kannst du Quests annehmen, Ressourcen sammeln und Monster bekämpfen.</p>
-   <button class="action" onclick="gainXP(20)">⚔️ Trainingskampf</button>
-  </div>
- </div>
+<div class="panel">
+<h2>⚔️ Schnellkampf</h2>
+<p>Stelle dein 3-vs-3-Team zusammen und starte einen Kampf.</p>
+<button onclick="showPage('battle')">Kampf starten</button>
+</div>
 
 </section>
 
 <!-- CHARAKTER -->
+<section id="character" class="page">
 
-<section id="character" class="section">
+<div class="panel">
+<h2>🧙 Charakter</h2>
 
- <div class="panel">
-  <h2>🧙 Charakter</h2>
+<div class="region-grid">
 
-  <div class="card">
-   <h3 id="className">Noch keine Klasse gewählt</h3>
-   <p>Level <strong id="charLevel">1</strong></p>
+<div class="card">
+<h3>⚔️ Klingenmeister</h3>
+<p>Starker physischer Nahkämpfer.</p>
+<button onclick="selectClass('Klingenmeister')">Wählen</button>
+</div>
 
-   <div class="progress">
-    <span id="xpBar"></span>
-   </div>
+<div class="card">
+<h3>🔮 Arkanist</h3>
+<p>Magieschaden und mächtige Zauber.</p>
+<button onclick="selectClass('Arkanist')">Wählen</button>
+</div>
 
-   <p>XP: <span id="charXP">0 / 100</span></p>
-  </div>
- </div>
+<div class="card">
+<h3>🛡️ Wächter</h3>
+<p>Hohe Verteidigung und Lebenspunkte.</p>
+<button onclick="selectClass('Wächter')">Wählen</button>
+</div>
 
- <div class="panel">
-  <h2>⚔️ Klasse wählen</h2>
+<div class="card">
+<h3>🌿 Naturhüter</h3>
+<p>Naturmagie und Unterstützung.</p>
+<button onclick="selectClass('Naturhüter')">Wählen</button>
+</div>
 
-  <div class="grid">
+</div>
 
-   <div class="card">
-    <h3>⚔️ Klingenmeister</h3>
-    <p>Meister des Nahkampfes.</p>
-    <button class="action" onclick="chooseClass('Klingenmeister')">Wählen</button>
-   </div>
+<p>Aktuelle Klasse: <b id="className">Klingenmeister</b></p>
+</div>
 
-   <div class="card">
-    <h3>🔮 Arkanist</h3>
-    <p>Beherrscht arkane Magie.</p>
-    <button class="action" onclick="chooseClass('Arkanist')">Wählen</button>
-   </div>
+<div class="panel">
+<h2>🛡️ Ausrüstung</h2>
 
-   <div class="card">
-    <h3>🛡️ Wächter</h3>
-    <p>Unerschütterlicher Verteidiger.</p>
-    <button class="action" onclick="chooseClass('Wächter')">Wählen</button>
-   </div>
+<div class="equipment-grid">
+<div class="card">🪖 Helm<br>Stahlwanderer +0</div>
+<div class="card">👕 Brust<br>Stahlwanderer +0</div>
+<div class="card">👖 Hose<br>Stahlwanderer +0</div>
+<div class="card">👢 Schuhe<br>Stahlwanderer +0</div>
+<div class="card">💍 Ring<br>Stahlwanderer +0</div>
+<div class="card">📿 Halskette<br>Stahlwanderer +0</div>
+<div class="card">🔗 Armband<br>Stahlwanderer +0</div>
+<div class="card">⚔️ Waffe<br>Stahlwanderer +0</div>
+</div>
+</div>
 
-   <div class="card">
-    <h3>🌿 Naturhüter</h3>
-    <p>Meister der Naturmagie.</p>
-    <button class="action" onclick="chooseClass('Naturhüter')">Wählen</button>
-   </div>
+</section>
 
-  </div>
- </div>
+<!-- BEGLEITER -->
+<section id="companions" class="page">
 
- <div class="panel">
-  <h2>🛡️ Ausrüstung</h2>
+<div class="panel">
+<h2>🐺 Deine Begleiter</h2>
 
-  <div class="grid">
+<div class="region-grid">
 
-   <div class="slot">🪖 Helm<br><strong>Stahlwanderer-Helm</strong></div>
-   <div class="slot">🛡️ Brust<br><strong>Stahlwanderer-Brust</strong></div>
-   <div class="slot">👖 Hose<br><strong>Stahlwanderer-Hose</strong></div>
-   <div class="slot">🥾 Schuhe<br><strong>Stahlwanderer-Schuhe</strong></div>
-   <div class="slot">💎 Armband<br><strong>Stahlarmband</strong></div>
-   <div class="slot">📿 Halskette<br><strong>Lehrlingskette</strong></div>
-   <div class="slot">💍 Ring<br><strong>Einfacher Ring</strong></div>
-   <div class="slot">⚔️ Waffe<br><strong>Stahlschwert</strong></div>
+<div class="card">
+<div style="font-size:40px">🐺</div>
+<h3>Schattenwolf</h3>
+<p>Normal · Angreifer</p>
+<p>Lv. 1 · ★0</p>
+<button>Auswählen</button>
+</div>
 
-  </div>
- </div>
+<div class="card">
+<div style="font-size:40px">🦊</div>
+<h3>Runenfuchs</h3>
+<p>Selten · Magier</p>
+<p>Lv. 1 · ★0</p>
+<button>Auswählen</button>
+</div>
+
+<div class="card">
+<div style="font-size:40px">🐻</div>
+<h3>Eisenbär</h3>
+<p>Normal · Tank</p>
+<p>Lv. 1 · ★0</p>
+<button>Auswählen</button>
+</div>
+
+<div class="card">
+<div style="font-size:40px">🐉</div>
+<h3>Feuerdrache</h3>
+<p>Legendär · Magier</p>
+<p>Lv. 1 · ★0</p>
+<button>Auswählen</button>
+</div>
+
+</div>
+</div>
+
+</section>
+
+<!-- KAMPF -->
+<section id="battle" class="page">
+
+<div class="panel">
+
+<div class="turn" id="battleStatus">
+Bereit für den Kampf
+</div>
+
+<div class="initiative" id="initiative"></div>
+
+<div class="team" id="playerTeam"></div>
+
+<div class="vs">VS</div>
+
+<div class="team" id="enemyTeam"></div>
+
+</div>
+
+<div class="panel">
+
+<h3>🎯 Aktionen</h3>
+
+<div id="actionText">
+Wähle eine Fähigkeit.
+</div>
+
+<div class="battle-actions">
+
+<button class="skill" onclick="useSkill('basic')">
+⚔️ Angriff
+</button>
+
+<button class="skill fire" onclick="useSkill('special')">
+🔥 Spezialangriff
+</button>
+
+<button class="skill def" onclick="useSkill('defense')">
+🛡️ Verteidigen
+</button>
+
+<button class="skill heal" onclick="useSkill('heal')">
+💚 Heilen
+</button>
+
+<button onclick="endRound()">
+➡️ Runde beenden
+</button>
+
+<button onclick="resetBattle()">
+🔄 Kampf zurücksetzen
+</button>
+
+</div>
+
+</div>
+
+<div class="panel">
+
+<h3>📜 Kampflog</h3>
+
+<div class="log" id="battleLog"></div>
+
+</div>
 
 </section>
 
 <!-- INVENTAR -->
+<section id="inventory" class="page">
 
-<section id="inventory" class="section">
+<div class="panel">
+<h2>🎒 Inventar</h2>
 
- <div class="panel">
-  <h2>🎒 Inventar</h2>
-
-  <div class="grid">
-
-   <div class="card">
-    <h3>⭐ Sternsplitter</h3>
-    <p id="stones">100 Stück</p>
-   </div>
-
-   <div class="card">
-    <h3>💰 Gold</h3>
-    <p id="inventoryGold">250</p>
-   </div>
-
-   <div class="card">
-    <h3>⚔️ Stahlschwert</h3>
-    <p class="quality-normal">Normal · ★0</p>
-   </div>
-
-   <div class="card">
-    <h3>🛡️ Stahlwanderer</h3>
-    <p class="quality-normal">Normal · 1/8 Teile</p>
-   </div>
-
-  </div>
- </div>
-
- <div class="panel">
-  <h2>⭐ Verstärkung</h2>
-  <p>Aktuelles Ausrüstungsteil: <strong>Stahlschwert ★0</strong></p>
-  <button class="action" onclick="enhance()">⭐ Verstärken</button>
-  <div id="enhanceMessage" class="notice">
-   Benötigt Sternsplitter.
-  </div>
- </div>
+<div class="region-grid">
+<div class="card">⭐ Sternsplitter<br><b id="starDust">20</b></div>
+<div class="card">💎 Sternkristall<br>0</div>
+<div class="card">🔷 Himmelskristall<br>0</div>
+<div class="card">✨ Sternessenz<br>0</div>
+<div class="card">💰 Goldkern<br>0</div>
+</div>
+</div>
 
 </section>
 
 <!-- MINEN -->
+<section id="mines" class="page">
 
-<section id="mines" class="section">
+<div class="panel">
+<h2>⛏️ Minen</h2>
 
- <div class="panel">
-  <h2>⛏️ Ressourcenminen</h2>
-  <p>Jede Mine besitzt 100 Ressourcen und füllt sich nach kurzer Zeit wieder auf.</p>
+<div class="mine-grid">
 
-  <div class="grid">
+<div class="card">
+<h3>⭐ Verstärkungssteinmine</h3>
+<p>Bestand: <b id="mine1">100</b>/100</p>
+<button onclick="mine(1)">⛏️ Abbauen</button>
+</div>
 
-   <div id="mine1" class="card mine">
-    <h3>⛏️ Verstärkungssteinmine</h3>
-    <p>Ressourcen: <strong id="mine1Count">100</strong> / 100</p>
-    <p>Für ★0–★3</p>
-    <button class="action" onclick="mine(1)">⛏️ Abbauen</button>
-   </div>
+<div class="card">
+<h3>💎 Sternkristallmine</h3>
+<p>Bestand: 100/100</p>
+<button>⛏️ Abbauen</button>
+</div>
 
-   <div id="mine2" class="card mine">
-    <h3>💠 Sternkristallmine</h3>
-    <p>Ressourcen: <strong id="mine2Count">100</strong> / 100</p>
-    <p>Für ★4–★6</p>
-    <button class="action" onclick="mine(2)">⛏️ Abbauen</button>
-   </div>
+<div class="card">
+<h3>🔷 Himmelskristallmine</h3>
+<p>Bestand: 100/100</p>
+<button>⛏️ Abbauen</button>
+</div>
 
-   <div id="mine3" class="card mine">
-    <h3>🔷 Himmelskristallmine</h3>
-    <p>Ressourcen: <strong id="mine3Count">100</strong> / 100</p>
-    <p>Für ★7–★9</p>
-    <button class="action" onclick="mine(3)">⛏️ Abbauen</button>
-   </div>
-
-  </div>
-
-  <div id="mineMessage" class="notice">
-   Wähle eine Mine.
-  </div>
- </div>
+</div>
+</div>
 
 </section>
 
 <!-- QUESTS -->
+<section id="quests" class="page">
 
-<section id="quests" class="section">
+<div class="panel">
+<h2>📜 Quests</h2>
 
- <div class="panel">
-  <h2>📜 Quests</h2>
+<div class="quest-grid">
 
-  <div class="card quest">
-   <h3>🌲 Die ersten Schritte</h3>
-   <p>Erkunde das Grüne Tal.</p>
-   <p>Belohnung: 20 XP + 50 Gold</p>
-   <button class="action" onclick="completeQuest(1)">Quest abschließen</button>
-  </div>
+<div class="card">
+<h3>🐺 Erste Prüfung</h3>
+<p>Gewinne einen 3-vs-3-Kampf.</p>
+<button onclick="showPage('battle')">Kämpfen</button>
+</div>
 
-  <br>
+<div class="card">
+<h3>⛏️ Der erste Fund</h3>
+<p>Sammle 10 Verstärkungssteine.</p>
+<button onclick="showPage('mines')">Mine besuchen</button>
+</div>
 
-  <div class="card quest">
-   <h3>⛏️ Die alte Mine</h3>
-   <p>Sammle 10 Verstärkungssteine.</p>
-   <p>Belohnung: 50 XP + 75 Gold</p>
-   <button class="action" onclick="completeQuest(2)">Quest abschließen</button>
-  </div>
-
-  <br>
-
-  <div class="card quest">
-   <h3>🐺 Gefahr im Wald</h3>
-   <p>Besiege ein Monster im Grünen Tal.</p>
-   <p>Belohnung: 100 XP + 100 Gold</p>
-   <button class="action" onclick="completeQuest(3)">Quest abschließen</button>
-  </div>
-
-  <div id="questMessage" class="notice">
-   Deine Quests warten auf dich.
-  </div>
- </div>
+</div>
+</div>
 
 </section>
 
-</main>
-
 <script>
 
-let player={
- level:1,
- xp:0,
- gold:250,
- stones:100,
- class:"",
- region:"Grünes Tal",
- weaponStars:0
+let state={
+  level:1,
+  xp:0,
+  gold:250,
+  region:"Grünes Tal",
+  className:"Klingenmeister",
+  round:1,
+  turnIndex:0,
+  battleStarted:false,
+  mine:100
 };
 
-let mines={
- 1:100,
- 2:100,
- 3:100
-};
+const playerUnits=[
+ {
+  id:"wolf",
+  name:"Klingenwolf",
+  icon:"🐺",
+  hp:100,
+  maxHp:100,
+  attack:24,
+  magic:8,
+  defense:10,
+  speed:30,
+  type:"Angreifer"
+ },
+ {
+  id:"fox",
+  name:"Runenfuchs",
+  icon:"🦊",
+  hp:85,
+  maxHp:85,
+  attack:12,
+  magic:28,
+  defense:7,
+  speed:42,
+  type:"Magier"
+ },
+ {
+  id:"bear",
+  name:"Eisenbär",
+  icon:"🐻",
+  hp:145,
+  maxHp:145,
+  attack:18,
+  magic:5,
+  defense:24,
+  speed:18,
+  type:"Tank"
+ }
+];
 
-function showTab(id,button){
+const enemyUnits=[
+ {
+  id:"shadow",
+  name:"Schattenwolf",
+  icon:"🐺",
+  hp:95,
+  maxHp:95,
+  attack:20,
+  magic:5,
+  defense:8,
+  speed:35
+ },
+ {
+  id:"fire",
+  name:"Feuerluchs",
+  icon:"🦊",
+  hp:80,
+  maxHp:80,
+  attack:23,
+  magic:20,
+  defense:6,
+  speed:40
+ },
+ {
+  id:"golem",
+  name:"Felsgolem",
+  icon:"🗿",
+  hp:160,
+  maxHp:160,
+  attack:17,
+  magic:4,
+  defense:28,
+  speed:12
+ }
+];
 
- document.querySelectorAll(".section")
- .forEach(s=>s.classList.remove("active"));
+let allUnits=[];
+let selectedTarget=0;
 
- document.getElementById(id)
- .classList.add("active");
+function showPage(id,button){
 
- document.querySelectorAll("nav button")
- .forEach(b=>b.classList.remove("active"));
+ document.querySelectorAll(".page")
+ .forEach(p=>p.classList.remove("active"));
 
- button.classList.add("active");
+ document.getElementById(id).classList.add("active");
+
+ if(button){
+  document.querySelectorAll(".nav button")
+  .forEach(b=>b.classList.remove("active"));
+
+  button.classList.add("active");
+ }
+
+ if(id==="battle"){
+  renderBattle();
+ }
 }
 
-function chooseClass(name){
+function travel(region){
+ state.region=region;
+ document.getElementById("region").textContent=region;
+ addLog("🌍 Du reist nach "+region+".");
+}
 
- player.class=name;
-
+function selectClass(name){
+ state.className=name;
  document.getElementById("className").textContent=name;
-
- alert("Du bist jetzt "+name+"!");
-
+ addLog("🧙 Klasse gewählt: "+name);
 }
 
-function travel(place){
+function resetBattle(){
 
- player.region=place;
+ playerUnits[0].hp=100;
+ playerUnits[1].hp=85;
+ playerUnits[2].hp=145;
 
- document.getElementById("region").textContent=place;
+ enemyUnits[0].hp=95;
+ enemyUnits[1].hp=80;
+ enemyUnits[2].hp=160;
 
- document.getElementById("currentLocation").textContent=place;
+ state.round=1;
+ state.turnIndex=0;
+ state.battleStarted=true;
 
- document.getElementById("travelMessage").textContent=
- "Du bist nach "+place+" gereist.";
+ document.getElementById("battleLog").innerHTML="";
 
+ createInitiative();
+
+ addLog("⚔️ Der Kampf beginnt!");
+ addLog("🎯 Initiative bestimmt die Reihenfolge.");
+
+ renderBattle();
 }
 
-function gainXP(amount){
+function createInitiative(){
 
- player.xp+=amount;
-
- checkLevel();
-
- update();
-
- alert("Du erhältst "+amount+" XP!");
-
-}
-
-function checkLevel(){
-
- while(player.xp>=100 && player.level<120){
-
-  player.xp-=100;
-  player.level++;
-
- }
-
-}
-
-function update(){
-
- document.getElementById("level").textContent=player.level;
- document.getElementById("charLevel").textContent=player.level;
-
- document.getElementById("xp").textContent=
- player.xp+" / 100";
-
- document.getElementById("charXP").textContent=
- player.xp+" / 100";
-
- document.getElementById("gold").textContent=player.gold;
- document.getElementById("inventoryGold").textContent=player.gold;
-
- document.getElementById("stones").textContent=
- player.stones+" Stück";
-
- document.getElementById("xpBar").style.width=
- Math.min(player.xp,100)+"%";
-
- document.getElementById("region").textContent=player.region;
-
-}
-
-function mine(number){
-
- if(mines[number]<=0){
-
-  document.getElementById("mineMessage").textContent=
-  "Diese Mine ist leer. Sie wird bald wieder aufgefüllt.";
-
-  return;
- }
-
- let amount=Math.min(10,mines[number]);
-
- mines[number]-=amount;
-
- player.stones+=amount;
-
- document.getElementById("mine"+number+"Count").textContent=
- mines[number];
-
- document.getElementById("mineMessage").textContent=
- "Du hast "+amount+" Ressourcen abgebaut.";
-
- update();
-
- if(mines[number]<=0){
-
-  document.getElementById("mine"+number)
-  .classList.add("empty");
-
-  setTimeout(function(){
-
-   mines[number]=100;
-
-   document.getElementById("mine"+number+"Count")
-   .textContent=100;
-
-   document.getElementById("mine"+number)
-   .classList.remove("empty");
-
-  },10000);
-
- }
-
-}
-
-function enhance(){
-
- if(player.stones<=0){
-
-  document.getElementById("enhanceMessage").textContent=
-  "Du hast keine Sternsplitter.";
-
-  return;
- }
-
- if(player.weaponStars>=10){
-
-  document.getElementById("enhanceMessage").textContent=
-  "Deine Waffe besitzt bereits ★10.";
-
-  return;
- }
-
- let rates=[
-  100,
-  100,
-  95,
-  90,
-  85,
-  75,
-  55,
-  40,
-  25,
-  12
+ allUnits=[
+  ...playerUnits.map(u=>({...u,team:"player"})),
+  ...enemyUnits.map(u=>({...u,team:"enemy"}))
  ];
 
- let rate=rates[player.weaponStars];
+ allUnits.sort((a,b)=>b.speed-a.speed);
 
- player.stones--;
+ document.getElementById("initiative").innerHTML=
+ allUnits.map((u,i)=>
+ `<span>${i+1}. ${u.icon} ${u.name}</span>`
+ ).join("");
+}
 
- let roll=Math.random()*100;
+function renderBattle(){
 
- if(roll<rate){
+ renderTeam("playerTeam",playerUnits,false);
+ renderTeam("enemyTeam",enemyUnits,true);
 
-  player.weaponStars++;
+ if(!state.battleStarted){
+  resetBattle();
+ }
+}
 
-  document.getElementById("enhanceMessage").textContent=
-  "⭐ Erfolg! Dein Stahlschwert ist jetzt ★"+
-  player.weaponStars+".";
+function renderTeam(elementId,units,isEnemy){
 
- }else{
+ const container=document.getElementById(elementId);
 
-  if(player.weaponStars>=4){
-   player.weaponStars--;
+ container.innerHTML=units.map((u,i)=>{
+
+  const percent=Math.max(0,(u.hp/u.maxHp)*100);
+
+  return `
+  <div class="card unit ${isEnemy?"enemy":""} ${u.hp<=0?"dead":""}"
+       id="${isEnemy?"enemy":"player"}-${i}"
+       onclick="${isEnemy?`selectTarget(${i})`:''}">
+
+   <div class="unit-icon">${u.icon}</div>
+
+   <h3>${u.name}</h3>
+
+   <p>${u.type||"Gegner"}</p>
+
+   <p>${Math.max(0,Math.round(u.hp))}/${u.maxHp} HP</p>
+
+   <div class="hpbar">
+    <div class="hp" style="width:${percent}%"></div>
+   </div>
+
+  </div>
+  `;
+ }).join("");
+}
+
+function selectTarget(index){
+
+ if(enemyUnits[index].hp<=0)return;
+
+ selectedTarget=index;
+
+ document.querySelectorAll(".enemy")
+ .forEach(e=>e.classList.remove("target"));
+
+ const target=document.getElementById("enemy-"+index);
+
+ if(target)target.classList.add("target");
+
+ document.getElementById("actionText").textContent=
+ "Ziel: "+enemyUnits[index].name;
+}
+
+function getAlivePlayer(){
+
+ return playerUnits.filter(u=>u.hp>0);
+}
+
+function getAliveEnemies(){
+
+ return enemyUnits.filter(u=>u.hp>0);
+}
+
+function useSkill(skill){
+
+ if(getAlivePlayer().length===0 || getAliveEnemies().length===0)return;
+
+ const attacker=
+  playerUnits.find(u=>u.hp>0);
+
+ const target=enemyUnits[selectedTarget];
+
+ if(!target || target.hp<=0){
+  selectedTarget=enemyUnits.findIndex(u=>u.hp>0);
+ }
+
+ const actualTarget=enemyUnits[selectedTarget];
+
+ if(!actualTarget)return;
+
+ animateAttack(attacker,actualTarget);
+
+ let damage=0;
+
+ if(skill==="basic"){
+  damage=Math.max(
+   5,
+   attacker.attack-actualTarget.defense+
+   random(5,12)
+  );
+
+  addLog(
+   `⚔️ ${attacker.name} greift ${actualTarget.name} an und verursacht ${damage} Schaden.`
+  );
+ }
+
+ if(skill==="special"){
+
+  damage=Math.max(
+   10,
+   attacker.attack+
+   attacker.magic+
+   random(10,25)-
+   actualTarget.defense
+  );
+
+  addLog(
+   `🔥 ${attacker.name} setzt eine Spezialfähigkeit ein und verursacht ${damage} Schaden!`
+  );
+ }
+
+ if(skill==="defense"){
+
+  attacker.defense+=10;
+
+  addLog(
+   `🛡️ ${attacker.name} geht in Verteidigungsstellung.`
+  );
+
+  setTimeout(enemyTurn,500);
+  return;
+ }
+
+ if(skill==="heal"){
+
+  const heal=Math.min(
+   attacker.maxHp-attacker.hp,
+   20+attacker.magic
+  );
+
+  attacker.hp+=heal;
+
+  addLog(
+   `💚 ${attacker.name} heilt sich um ${heal} HP.`
+  );
+
+  renderBattle();
+
+  setTimeout(enemyTurn,600);
+  return;
+ }
+
+ actualTarget.hp=Math.max(0,actualTarget.hp-damage);
+
+ renderBattle();
+
+ if(actualTarget.hp<=0){
+  addLog(`💀 ${actualTarget.name} wurde besiegt!`);
+ }
+
+ checkBattleEnd();
+
+ if(getAliveEnemies().length>0){
+  setTimeout(enemyTurn,700);
+ }
+}
+
+function enemyTurn(){
+
+ if(getAliveEnemies().length===0)return;
+
+ const enemy=
+  enemyUnits.find(u=>u.hp>0);
+
+ const targets=
+  getAlivePlayer();
+
+ if(targets.length===0)return;
+
+ const target=
+  targets[random(0,targets.length-1)];
+
+ animateAttack(enemy,target);
+
+ const damage=Math.max(
+  4,
+  enemy.attack-target.defense+
+  random(4,10)
+ );
+
+ target.hp=Math.max(0,target.hp-damage);
+
+ addLog(
+  `👹 ${enemy.name} trifft ${target.name} für ${damage} Schaden.`
+ );
+
+ renderBattle();
+
+ if(target.hp<=0){
+  addLog(`💀 ${target.name} wurde besiegt!`);
+ }
+
+ checkBattleEnd();
+}
+
+function animateAttack(attacker,target){
+
+ const attackerIsPlayer=
+  playerUnits.includes(attacker);
+
+ const targetIsPlayer=
+  playerUnits.includes(target);
+
+ const attackerElement=
+  document.getElementById(
+   `${attackerIsPlayer?"player":"enemy"}-${getIndex(attacker)}`
+  );
+
+ const targetElement=
+  document.getElementById(
+   `${targetIsPlayer?"player":"enemy"}-${getIndex(target)}`
+  );
+
+ if(attackerElement){
+
+  attackerElement.classList.remove("attacking");
+
+  void attackerElement.offsetWidth;
+
+  attackerElement.classList.add("attacking");
+ }
+
+ setTimeout(()=>{
+
+  if(targetElement){
+
+   targetElement.classList.remove("hit");
+
+   void targetElement.offsetWidth;
+
+   targetElement.classList.add("hit");
   }
 
-  document.getElementById("enhanceMessage").textContent=
-  "❌ Verstärkung fehlgeschlagen.";
-
- }
-
- update();
-
+ },220);
 }
 
-function completeQuest(id){
+function getIndex(unit){
 
- if(id===1){
-
-  player.gold+=50;
-  player.xp+=20;
-
- }else if(id===2){
-
-  player.gold+=75;
-  player.xp+=50;
-
- }else{
-
-  player.gold+=100;
-  player.xp+=100;
-
+ if(playerUnits.includes(unit)){
+  return playerUnits.indexOf(unit);
  }
 
- checkLevel();
- update();
-
- document.getElementById("questMessage").textContent=
- "✅ Quest abgeschlossen! Belohnung erhalten.";
-
+ return enemyUnits.indexOf(unit);
 }
 
-update();
+function endRound(){
+
+ state.round++;
+
+ playerUnits.forEach(u=>{
+  if(u.hp>0){
+   u.defense=Math.max(5,u.defense-10);
+  }
+ });
+
+ addLog(`🔄 Runde ${state.round} beginnt.`);
+
+ document.getElementById("battleStatus").textContent=
+ "Runde "+state.round;
+
+ renderBattle();
+}
+
+function checkBattleEnd(){
+
+ if(getAliveEnemies().length===0){
+
+  addLog("🏆 Sieg! Du hast den Kampf gewonnen!");
+
+  document.getElementById("battleStatus").textContent=
+   "🏆 SIEG";
+
+  state.gold+=50;
+  state.xp+=35;
+
+  document.getElementById("gold").textContent=state.gold;
+  document.getElementById("xp").textContent=state.xp;
+
+  addLog("🎁 Belohnung: +50 Gold, +35 XP");
+
+  if(state.xp>=100){
+
+   state.xp-=100;
+   state.level++;
+
+   document.getElementById("playerLevel").textContent=state.level;
+
+   addLog(`✨ Levelaufstieg! Du bist jetzt Level ${state.level}.`);
+  }
+
+  return;
+ }
+
+ if(getAlivePlayer().length===0){
+
+  addLog("💀 Niederlage. Deine Gruppe wurde besiegt.");
+
+  document.getElementById("battleStatus").textContent=
+   "💀 NIEDERLAGE";
+ }
+}
+
+function addLog(text){
+
+ const log=document.getElementById("battleLog");
+
+ const line=document.createElement("div");
+
+ line.textContent=text;
+
+ log.appendChild(line);
+
+ log.scrollTop=log.scrollHeight;
+}
+
+function random(min,max){
+
+ return Math.floor(
+  Math.random()*(max-min+1)
+ )+min;
+}
+
+function mine(id){
+
+ if(state.mine<=0){
+
+  addLog("⛏️ Diese Mine ist leer.");
+
+  return;
+ }
+
+ const amount=Math.min(10,state.mine);
+
+ state.mine-=amount;
+
+ document.getElementById("mine1").textContent=state.mine;
+
+ addLog(`⛏️ Du hast ${amount} Verstärkungssteine gesammelt.`);
+
+ if(state.mine===0){
+
+  addLog("🔄 Die Mine ist leer und wird später wieder aufgefüllt.");
+
+  setTimeout(()=>{
+
+   state.mine=100;
+
+   document.getElementById("mine1").textContent=100;
+
+   addLog("✨ Die Verstärkungssteinmine ist wieder verfügbar.");
+
+  },10000);
+ }
+}
+
+resetBattle();
 
 </script>
 
