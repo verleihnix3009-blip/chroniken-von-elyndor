@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101522">
+  <title>Chroniken von Elyndor</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #0b0f18;
+      color: #f2f4f8;
+    }
+
+    header {
+      padding: 20px;
+      text-align: center;
+      background: linear-gradient(135deg, #171f32, #0d111c);
+      border-bottom: 1px solid #39445c;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      color: #aeb9cc;
+    }
+
+    .player {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+      color: #d7c27a;
+    }
+
+    main {
+      max-width: 900px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .panel {
+      background: #151b29;
+      border: 1px solid #303a50;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      margin-top: 0;
+    }
+
+    .classes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      border: 1px solid #46536d;
+      border-radius: 10px;
+      background: #20293b;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2b3850;
+    }
+
+    .class-card {
+      padding: 18px;
+      border-radius: 12px;
+      background: #1b2333;
+      border: 1px solid #354158;
+    }
+
+    .class-card h3 {
+      margin-top: 0;
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 15px;
+      background: #101722;
+      border-radius: 10px;
+      color: #c8d2e5;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .gold {
+      color: #e7c766;
+    }
+
+    .success {
+      color: #76d69b;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>Chroniken von Elyndor</h1>
+  <div class="subtitle">Ein Fantasy-RPG im Reich der alten Mächte</div>
+
+  <div class="player">
+    <span>Level: <strong id="level">1</strong></span>
+    <span>Gold: <strong class="gold" id="gold">250</strong></span>
+    <span>Gebiet: <strong id="region">Grünes Tal</strong></span>
+  </div>
+</header>
+
+<main>
+
+  <section class="panel">
+    <h2>Wähle deine Klasse</h2>
+
+    <div class="classes">
+
+      <div class="class-card">
+        <h3>⚔️ Klingenmeister</h3>
+        <p>Meister des Nahkampfes mit hoher Angriffskraft.</p>
+        <button onclick="chooseClass('Klingenmeister')">
+          Klingenmeister wählen
+        </button>
+      </div>
+
+      <div class="class-card">
+        <h3>🔮 Arkanist</h3>
+        <p>Beherrscht mächtige arkane Magie.</p>
+        <button onclick="chooseClass('Arkanist')">
+          Arkanist wählen
+        </button>
+      </div>
+
+      <div class="class-card">
+        <h3>🛡️ Wächter</h3>
+        <p>Unerschütterlicher Verteidiger seiner Verbündeten.</p>
+        <button onclick="chooseClass('Wächter')">
+          Wächter wählen
+        </button>
+      </div>
+
+      <div class="class-card">
+        <h3>🌿 Naturhüter</h3>
+        <p>Verbindet Naturmagie, Geschwindigkeit und Heilung.</p>
+        <button onclick="chooseClass('Naturhüter')">
+          Naturhüter wählen
+        </button>
+      </div>
+
+    </div>
+
+    <div id="status" class="status">
+      Noch keine Klasse gewählt.
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>🌎 Grünes Tal</h2>
+    <p>
+      Deine Reise beginnt im Grünen Tal. Alte Ruinen, versteckte Minen
+      und gefährliche Kreaturen warten auf dich.
+    </p>
+
+    <button onclick="startAdventure()">
+      Abenteuer beginnen
+    </button>
+
+    <div id="adventure" class="status hidden"></div>
+  </section>
+
+</main>
+
+<script>
+  let playerClass = "";
+
+  function chooseClass(selectedClass) {
+    playerClass = selectedClass;
+
+    document.getElementById("status").innerHTML =
+      "<span class='success'>✓ Klasse gewählt:</span> " +
+      "<strong>" + selectedClass + "</strong><br><br>" +
+      "Deine Reise in Elyndor kann beginnen.";
+  }
+
+  function startAdventure() {
+    const adventure = document.getElementById("adventure");
+
+    if (!playerClass) {
+      adventure.classList.remove("hidden");
+      adventure.innerHTML =
+        "⚠️ Wähle zuerst eine Klasse.";
+      return;
+    }
+
+    adventure.classList.remove("hidden");
+
+    adventure.innerHTML =
+      "<strong>⚔️ Abenteuer gestartet!</strong><br><br>" +
+      "Du bist ein " + playerClass +
+      " auf Stufe 1 und betrittst das Grüne Tal.<br><br>" +
+      "Deine ersten Aufgaben warten bereits auf dich.";
+  }
+</script>
+
+</body>
+</html>
